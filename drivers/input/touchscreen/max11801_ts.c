@@ -40,6 +40,7 @@
 #include <linux/bitops.h>
 #include <linux/delay.h>
 
+#define ICORE6M_DRIVER_TS
 
 /* Register Address define */
 #define GENERNAL_STATUS_REG		0x00
@@ -174,20 +175,26 @@ static void calibration_pointer(int *x_orig, int *y_orig)
 	*y_orig = y;
 }
 
+static int px, py;
+
+#ifdef ICORE6M_DRIVER_TS
+#define NSAMPLE 8
+static int data_x[NSAMPLE];
+static int data_y[NSAMPLE];
+static int sample_count=0;
+static int ii=0;
+#endif
+
 static irqreturn_t max11801_ts_interrupt(int irq, void *dev_id)
 {
 	struct max11801_data *data = dev_id;
 	struct i2c_client *client = data->client;
 	int status, i, ret;
 	u8 buf[XY_BUFSIZE];
-	u8 x_buf[X_BUFSIZE];
-	u8 y_buf[Y_BUFSIZE];
-	u8 temp_buf[1];
 	int x = -1;
 	int y = -1;
 
 	status = read_register(data->client, GENERNAL_STATUS_REG);
-	if (max11801_workmode == 0) {
 		if (status & (MAX11801_FIFO_INT | MAX11801_FIFO_OVERFLOW)) {
 				status = read_register(data->client, GENERNAL_STATUS_REG);
 
@@ -210,23 +217,66 @@ static irqreturn_t max11801_ts_interrupt(int irq, void *dev_id)
 						    (buf[i + 1] >> XY_BUF_OFFSET);
 				}
 
+
 				if ((buf[1] & EVENT_TAG_MASK) != (buf[3] & EVENT_TAG_MASK))
 					goto out;
-
+				
 				switch (buf[1] & EVENT_TAG_MASK) {
 				case EVENT_INIT:
 					/* fall through */
 				case EVENT_MIDDLE:
 					calibration_pointer(&x, &y);
+					#ifdef ICORE6M_DRIVER_TS					
+					if (sample_count>1)
+					{
+						memcpy(data_x,&data_x[1],sizeof(data_x[0])*(NSAMPLE-1));
+						memcpy(data_y,&data_y[1],sizeof(data_x[0])*(NSAMPLE-1));
+						data_x[NSAMPLE-1]=x;
+						data_y[NSAMPLE-1]=y;
+						x=0;
+						y=0;
+						for(ii=0;ii<NSAMPLE;ii++)
+						{
+                                                  x+=data_x[ii];
+                                                  y+=data_y[ii];
+						}
+						x/=NSAMPLE;
+						y/=NSAMPLE;
+						px=x;
+						py=y;
+						input_report_abs(data->input_dev, ABS_X, x);
+						input_report_abs(data->input_dev, ABS_Y, y);
+						input_report_abs(data->input_dev, ABS_PRESSURE, 1);
+						input_sync(data->input_dev);				
+					}
+					else
+					{
+						if(sample_count)
+						{
+							for(ii=0;ii<NSAMPLE;ii++)
+							{
+								data_x[ii]=x;
+								data_y[ii]=y;
+							}
+						}
+						sample_count++;
+					}
+					#else
+					px=x;
+					py=y;
 					input_report_abs(data->input_dev, ABS_X, x);
 					input_report_abs(data->input_dev, ABS_Y, y);
-					input_event(data->input_dev, EV_KEY, BTN_TOUCH, 1);
+					input_report_abs(data->input_dev, ABS_PRESSURE, 1);
 					input_sync(data->input_dev);
+					#endif
 					break;
 
 				case EVENT_RELEASE:
-					input_event(data->input_dev, EV_KEY, BTN_TOUCH, 0);
+					input_report_abs(data->input_dev, ABS_X, px);
+					input_report_abs(data->input_dev, ABS_Y, py);
+					input_report_abs(data->input_dev, ABS_PRESSURE, 0);
 					input_sync(data->input_dev);
+					sample_count=0;
 					break;
 
 				case EVENT_FIFO_END:
@@ -235,73 +285,7 @@ static irqreturn_t max11801_ts_interrupt(int irq, void *dev_id)
 			}
 out:
 return IRQ_HANDLED;
-		}
-	else if (max11801_workmode == 1) {
-		if (status & (MAX11801_EDGE_INT)) {
-				status = read_register(data->client, GENERNAL_STATUS_REG);
 
-				/* X = panel setup*/
-				max11801_dcm_write_command(client, Panel_Setup_X);
-				/* X_measurement*/
-				max11801_dcm_write_command(client, X_measurement);
-				ret = i2c_smbus_read_i2c_block_data(client, FIFO_RD_X_MSB,
-									1, temp_buf);
-				x_buf[0] = temp_buf[0];
-				if (ret < 1)
-					goto out2;
-				ret = i2c_smbus_read_i2c_block_data(client, FIFO_RD_X_LSB,
-									1, temp_buf);
-				x_buf[1] = temp_buf[0];
-				if (ret < 1)
-					goto out2;
-				/* Y = panel setup*/
-				max11801_dcm_write_command(client, Panel_Setup_Y);
-				/* Y_measurement*/
-				max11801_dcm_write_command(client, Y_measurement);
-				ret = i2c_smbus_read_i2c_block_data(client, FIFO_RD_Y_MSB,
-									1, temp_buf);
-				y_buf[0] = temp_buf[0];
-				if (ret < 1)
-					goto out2;
-				ret = i2c_smbus_read_i2c_block_data(client, FIFO_RD_Y_LSB,
-									1, temp_buf);
-				y_buf[1] = temp_buf[0];
-				if (ret < 1)
-					goto out2;
-
-				if ((x_buf[1] & MEASURE_TAG_MASK) == MEASURE_X_TAG)
-					x = (x_buf[0] << XY_BUF_OFFSET) +
-						(x_buf[1] >> XY_BUF_OFFSET);
-				if ((y_buf[1] & MEASURE_TAG_MASK) == MEASURE_Y_TAG)
-					y = (y_buf[0] << XY_BUF_OFFSET) +
-						(y_buf[1] >> XY_BUF_OFFSET);
-
-				if ((x_buf[1] & EVENT_TAG_MASK) != (y_buf[1] & EVENT_TAG_MASK))
-					goto out2;
-
-				switch (x_buf[1] & EVENT_TAG_MASK) {
-				case EVENT_INIT:
-					/* fall through */
-				case EVENT_MIDDLE:
-					calibration_pointer(&x, &y);
-					input_report_abs(data->input_dev, ABS_X, x);
-					input_report_abs(data->input_dev, ABS_Y, y);
-					input_event(data->input_dev, EV_KEY, BTN_TOUCH, 1);
-					input_sync(data->input_dev);
-					break;
-
-				case EVENT_RELEASE:
-					input_event(data->input_dev, EV_KEY, BTN_TOUCH, 0);
-					input_sync(data->input_dev);
-					break;
-
-				case EVENT_FIFO_END:
-					break;
-				}
-			  }
-			}
-out2:
-return IRQ_HANDLED;
 }
 
 static void __devinit max11801_ts_phy_init(struct max11801_data *data)
@@ -312,15 +296,16 @@ static void __devinit max11801_ts_phy_init(struct max11801_data *data)
 		/* Average X,Y, take 16 samples, average eight media sample */
 		max11801_write_reg(client, MESURE_AVER_CONF_REG, 0xff);
 		/* X,Y panel setup time set to 20us */
-		max11801_write_reg(client, PANEL_SETUPTIME_CONF_REG, 0x11);
+		max11801_write_reg(client, PANEL_SETUPTIME_CONF_REG, 0x88);
 		/* Rough pullup time (2uS), Fine pullup time (10us)  */
-		max11801_write_reg(client, TOUCH_DETECT_PULLUP_CONF_REG, 0x10);
+		max11801_write_reg(client, TOUCH_DETECT_PULLUP_CONF_REG, 0x75);
 		/* Auto mode init period = 5ms , scan period = 5ms*/
 		max11801_write_reg(client, AUTO_MODE_TIME_CONF_REG, 0xaa);
 		/* Aperture X,Y set to +- 4LSB */
 		max11801_write_reg(client, APERTURE_CONF_REG, 0x33);
 		/* Enable Power, enable Automode, enable Aperture, enable Average X,Y */
 		max11801_write_reg(client, OP_MODE_CONF_REG, 0x36);
+		//max11801_write_reg(client, GENERNAL_CONF_REG, 0x70);
 	}
 	if (max11801_workmode == 1) {
 		/* Average X,Y, take 16 samples, average eight media sample */
@@ -348,7 +333,7 @@ static int __devinit max11801_ts_probe(struct i2c_client *client,
 	struct max11801_data *data;
 	struct input_dev *input_dev;
 	int error;
-
+	
 	data = kzalloc(sizeof(struct max11801_data), GFP_KERNEL);
 	input_dev = input_allocate_device();
 	if (!data || !input_dev) {
@@ -367,8 +352,13 @@ static int __devinit max11801_ts_probe(struct i2c_client *client,
 	__set_bit(EV_ABS, input_dev->evbit);
 	__set_bit(EV_KEY, input_dev->evbit);
 	__set_bit(BTN_TOUCH, input_dev->keybit);
+	__set_bit(ABS_X, input_dev->absbit);
+	__set_bit(ABS_Y, input_dev->absbit);
+	__set_bit(ABS_PRESSURE, input_dev->absbit);
+
 	input_set_abs_params(input_dev, ABS_X, 0, MAX11801_MAX_X, 0, 0);
 	input_set_abs_params(input_dev, ABS_Y, 0, MAX11801_MAX_Y, 0, 0);
+	input_set_abs_params(input_dev, ABS_PRESSURE, 0, 1, 0, 0);
 	input_set_drvdata(input_dev, data);
 
 	max11801_ts_phy_init(data);

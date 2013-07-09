@@ -1,0 +1,8 @@
+#!/bin/bash
+export ARCH=arm
+export CROSS_COMPILE=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-none-linux-gnueabi- 
+export PATH=$PATH:/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin
+#make clean
+#make imx6_defconfig
+make menuconfig
+make -j8 uImage

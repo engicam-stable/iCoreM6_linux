@@ -510,28 +510,36 @@ int32_t ipu_init_channel(struct ipu_soc *ipu, ipu_channel_t channel, ipu_channel
 
 	ipu_conf = ipu_cm_read(ipu, IPU_CONF);
 
+//	pr_debug("ipu_init_channel 0x%x\n", channel);
+
 	switch (channel) {
 	case CSI_MEM0:
 	case CSI_MEM1:
 	case CSI_MEM2:
 	case CSI_MEM3:
-		if (params->csi_mem.csi > 1) {
+		if (params->csi_mem.csi >  1) {
 			ret = -EINVAL;
 			goto err;
 		}
 
 		if (params->csi_mem.interlaced)
+		{
+			pr_debug("MEM INTERLACED\n");
 			ipu->chan_is_interlaced[channel_2_dma(channel,
 				IPU_OUTPUT_BUFFER)] = true;
+		}		
 		else
+		{
+			pr_debug("MEM NOT INTERLACED\n");
 			ipu->chan_is_interlaced[channel_2_dma(channel,
 				IPU_OUTPUT_BUFFER)] = false;
-
+		}
 		ipu->smfc_use_count++;
 		ipu->csi_channel[params->csi_mem.csi] = channel;
 
 		/*SMFC setting*/
 		if (params->csi_mem.mipi_en) {
+			pr_debug("MIPI ENABLED\n");
 			ipu_conf |= (1 << (IPU_CONF_CSI0_DATA_SOURCE_OFFSET +
 				params->csi_mem.csi));
 			_ipu_smfc_init(ipu, channel, params->csi_mem.mipi_vc,
@@ -539,6 +547,7 @@ int32_t ipu_init_channel(struct ipu_soc *ipu, ipu_channel_t channel, ipu_channel
 			_ipu_csi_set_mipi_di(ipu, params->csi_mem.mipi_vc,
 				params->csi_mem.mipi_id, params->csi_mem.csi);
 		} else {
+			pr_debug("MIPI DISABLED\n");
 			ipu_conf &= ~(1 << (IPU_CONF_CSI0_DATA_SOURCE_OFFSET +
 				params->csi_mem.csi));
 			_ipu_smfc_init(ipu, channel, 0, params->csi_mem.csi);
@@ -1079,6 +1088,7 @@ int32_t ipu_init_channel_buffer(struct ipu_soc *ipu, ipu_channel_t channel,
 	uint32_t dma_chan;
 	uint32_t burst_size;
 
+	pr_debug("ipu_init_channel_buffer: pixel_fmt = %x\n", pixel_fmt);
 	dma_chan = channel_2_dma(channel, type);
 	if (!idma_is_valid(dma_chan))
 		return -EINVAL;

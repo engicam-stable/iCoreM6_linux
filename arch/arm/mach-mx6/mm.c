@@ -79,6 +79,7 @@ static void mx6_set_cpu_type(void)
 		imx_print_silicon_rev("i.MX6DL/SOLO", mx6dl_revision());
 	} else
 		pr_err("Unknown CPU type: %x\n", cpu_type);
+
 }
 
 /*!

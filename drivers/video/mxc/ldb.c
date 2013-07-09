@@ -121,6 +121,12 @@ static struct fb_videomode ldb_modedb[] = {
 	 FB_VMODE_NONINTERLACED,
 	 FB_MODE_IS_DETAILED,},
 	{
+	 /* 800x480 @ 60 Hz */ 
+	 "HIT-LVDS" , 60, 800, 600, 30000, 30, 30, 5, 5, 64, 20,
+	 /*FB_SYNC_CLK_IDLE_EN |*/ FB_SYNC_CLK_LAT_FALL,
+	 FB_VMODE_NONINTERLACED,
+	 0,},
+	{
 	 "LDB-1080P60", 60, 1920, 1080, 7692,
 	 100, 40,
 	 30, 3,

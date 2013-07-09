@@ -363,11 +363,14 @@ static int __init imx_sgtl5000_init(void)
 	if (ret)
 		return -ENOMEM;
 
+#ifdef TOLTO_ICORE 
 	if (machine_is_mx35_3ds() || machine_is_mx6q_sabrelite())
 		imx_sgtl5000_dai[0].codec_name = "sgtl5000.0-000a";
 	else
 		imx_sgtl5000_dai[0].codec_name = "sgtl5000.1-000a";
-
+#else
+	imx_sgtl5000_dai[0].codec_name = "sgtl5000.2-000a";
+#endif
 	imx_sgtl5000_snd_device = platform_device_alloc("soc-audio", 1);
 	if (!imx_sgtl5000_snd_device)
 		return -ENOMEM;

@@ -322,6 +322,8 @@ static int __devinit mxc_cpufreq_init(struct cpufreq_policy *policy)
 	cpu_freq_khz_min = cpu_op_tbl[0].cpu_rate / 1000;
 	cpu_freq_khz_max = cpu_op_tbl[0].cpu_rate / 1000;
 
+	printk(KERN_INFO "cpu_freq_khz min=%d max=%d\n", cpu_freq_khz_min, cpu_freq_khz_max);
+
 	if (imx_freq_table == NULL) {
 		imx_freq_table = kmalloc(
 			sizeof(struct cpufreq_frequency_table) * (cpu_op_nr + 1),

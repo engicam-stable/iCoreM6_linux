@@ -34,11 +34,46 @@ static struct fb_videomode lcdif_modedb[] = {
 	FB_VMODE_NONINTERLACED,
 	0,},
 	{
+	/* 480x272 @ 60 Hz  OPENFRAME 4.3'' */
+	"URT-8484MD" , 60, 480, 272, 100000,  8, 2, 11, 2 ,   35 , 2 ,
+ 	FB_SYNC_CLK_LAT_FALL,
+	FB_VMODE_NONINTERLACED,
+	0,}, 	{
+	 /* URT 640x480 @ 60 Hz OPENFRAME 5.7'' */
+	 "URT-VGA" , 60, 640, 480, 38000, 80, 80, 22, 22, 30, 3,
+	 FB_SYNC_CLK_LAT_FALL,
+	 FB_VMODE_NONINTERLACED,
+	 0,}, 
+	{
+	 /* URT 800x480 @ 60 Hz OPENFRAME 7'' */
+	 "URT-LVDS" , 60, 800, 480, 30000, 30, 30, 5, 5, 64, 20,
+	 /*FB_SYNC_CLK_IDLE_EN |*/ FB_SYNC_CLK_LAT_FALL,
+	 FB_VMODE_NONINTERLACED,
+	 0,},                                           
+	{   
+	 /* 800x480 @ 60 Hz */ 
+	 "HIT-LVDS" , 60, 800, 600, 30000, 30, 30, 5, 5, 64, 20,
+	 /*FB_SYNC_CLK_IDLE_EN |*/ FB_SYNC_CLK_LAT_FALL,
+	 FB_VMODE_NONINTERLACED,
+	 0,},
+	{
 	/* 800x480 @ 60 Hz , pixel clk @ 32MHz */
 	"SEIKO-WVGA", 60, 800, 480, 29850, 89, 164, 23, 10, 10, 10,
 	FB_SYNC_CLK_LAT_FALL,
 	FB_VMODE_NONINTERLACED,
 	0,},
+	{
+	 /* 800x480 @ 60 Hz STARTERKIT 7'' */ 
+	 "Amp-WD" , 60, 800, 480, 30000, 30, 30, 5, 5, 64, 20,
+	 FB_SYNC_CLK_LAT_FALL,
+	 FB_VMODE_NONINTERLACED,
+	 0,},
+	{
+	 /* 800x480 @ 60 Hz , pixel clk @ 32MHz */
+	 "URT-WVGA", 60, 800, 480, 30000, 30, 30, 5, 5, 64, 20,
+	 FB_SYNC_CLK_IDLE_EN,
+	 FB_VMODE_NONINTERLACED,
+	 0,},
 };
 static int lcdif_modedb_sz = ARRAY_SIZE(lcdif_modedb);
 
