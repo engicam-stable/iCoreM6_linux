@@ -789,7 +789,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
         input_set_abs_params(input, ABS_MT_POSITION_Y,
                              0, tsdata->num_y * 64 - 1, 0, 0);
     //    error = input_mt_init_slots(input, MAX_SUPPORT_POINTS, 0);
-	    error = input_mt_init_slots(input,0);
+	    error = input_mt_init_slots(input,MAX_SUPPORT_POINTS);
         if (error) {
                 dev_err(&client->dev, "Unable to init MT slots.\n");
                 goto err_free_mem;
