@@ -29,7 +29,6 @@
 #include <sound/initval.h>
 
 #include "sgtl5000.h"
-
 #define SGTL5000_DAP_REG_OFFSET	0x0100
 #define SGTL5000_MAX_REG_OFFSET	0x013A
 
@@ -1444,12 +1443,13 @@ static int sgtl5000_enable_regulators(struct snd_soc_codec *codec)
 
 	ret = regulator_bulk_get(codec->dev, ARRAY_SIZE(sgtl5000->supplies),
 				sgtl5000->supplies);
+
+
 	if (!ret)
 		external_vddd = 1;
 	else {
 		/* set internal ldo to 1.2v */
 		int voltage = LDO_VOLTAGE;
-
 		ret = ldo_regulator_register(codec, &ldo_init_data, voltage);
 		if (ret) {
 			dev_err(codec->dev,
@@ -1457,7 +1457,6 @@ static int sgtl5000_enable_regulators(struct snd_soc_codec *codec)
 				ret);
 			return ret;
 		}
-
 		sgtl5000->supplies[VDDD].supply = LDO_CONSUMER_NAME;
 		ret = regulator_bulk_get(codec->dev,
 				ARRAY_SIZE(sgtl5000->supplies),
@@ -1471,17 +1470,17 @@ static int sgtl5000_enable_regulators(struct snd_soc_codec *codec)
 			return ret;
 		}
 	}
-
 	ret = regulator_bulk_enable(ARRAY_SIZE(sgtl5000->supplies),
 					sgtl5000->supplies);
 	if (ret)
 		goto err_regulator_free;
-
 	/* wait for all power rails bring up */
 	udelay(10);
 
 	/* read chip information */
 	reg = snd_soc_read(codec, SGTL5000_CHIP_ID);
+	
+
 	if (((reg & SGTL5000_PARTID_MASK) >> SGTL5000_PARTID_SHIFT) !=
 	    SGTL5000_PARTID_PART_ID) {
 		dev_err(codec->dev,
@@ -1505,11 +1504,9 @@ static int sgtl5000_enable_regulators(struct snd_soc_codec *codec)
 		/* free VDDD regulator */
 		regulator_bulk_free(ARRAY_SIZE(sgtl5000->supplies),
 					sgtl5000->supplies);
-
 		ret = ldo_regulator_register(codec, &ldo_init_data, voltage);
 		if (ret)
 			return ret;
-
 		sgtl5000->supplies[VDDD].supply = LDO_CONSUMER_NAME;
 
 		ret = regulator_bulk_get(codec->dev,
@@ -1522,12 +1519,10 @@ static int sgtl5000_enable_regulators(struct snd_soc_codec *codec)
 
 			return ret;
 		}
-
 		ret = regulator_bulk_enable(ARRAY_SIZE(sgtl5000->supplies),
 						sgtl5000->supplies);
 		if (ret)
 			goto err_regulator_free;
-
 		/* wait for all power rails bring up */
 		udelay(10);
 	}
@@ -1647,6 +1642,7 @@ static int sgtl5000_probe(struct snd_soc_codec *codec)
 	return 0;
 
 err:
+
 	regulator_bulk_disable(ARRAY_SIZE(sgtl5000->supplies),
 						sgtl5000->supplies);
 	regulator_bulk_free(ARRAY_SIZE(sgtl5000->supplies),
@@ -1688,13 +1684,14 @@ static __devinit int sgtl5000_i2c_probe(struct i2c_client *client,
 {
 	struct sgtl5000_priv *sgtl5000;
 	int ret;
+ 
 
 	sgtl5000 = kzalloc(sizeof(struct sgtl5000_priv), GFP_KERNEL);
 	if (!sgtl5000)
 		return -ENOMEM;
 
 	i2c_set_clientdata(client, sgtl5000);
-
+ 
 	ret = snd_soc_register_codec(&client->dev,
 			&sgtl5000_driver, &sgtl5000_dai, 1);
 	if (ret) {
@@ -1702,7 +1699,7 @@ static __devinit int sgtl5000_i2c_probe(struct i2c_client *client,
 		kfree(sgtl5000);
 		return ret;
 	}
-
+ 
 	return 0;
 }
 

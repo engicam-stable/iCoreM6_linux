@@ -76,9 +76,11 @@
 #include "cpu_op-mx6.h"
 
 #include <linux/mfd/mxc-hdmi-core.h>
+#include <linux/input/edt-ft5x06.h>
 
 #define ICORE_M6_SD1_CD		IMX_GPIO_NR(1, 1)
 #define MAX11801_TS_IRQ         IMX_GPIO_NR(3, 31)
+#define FT5X06_TS_IRQ           IMX_GPIO_NR(1, 7)
 
 #define ICORE_M6_SD3_CD		IMX_GPIO_NR(7, 0)
 #define ICORE_M6_SD3_WP		IMX_GPIO_NR(7, 1)
@@ -273,7 +275,6 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_GPIO_17__GPIO_7_12,	/* USB Hub Reset */
 	MX6DL_PAD_GPIO_18__GPIO_7_13,	/* J14 - Volume Up */
 
-	/* I2C1, MAX11801 */
 	MX6DL_PAD_EIM_D21__I2C1_SCL,	/* GPIO3[21] */
 	MX6DL_PAD_EIM_D28__I2C1_SDA,	/* GPIO3[28] */
 
@@ -364,7 +365,6 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_CSI0_VSYNC__IPU1_CSI0_VSYNC,
 	MX6DL_PAD_CSI0_MCLK__IPU1_CSI0_HSYNC,
 	MX6DL_PAD_CSI0_PIXCLK__IPU1_CSI0_PIXCLK,
-
 };
 
 /* The GPMI is conflicted with SD3, so init this in the driver. */
@@ -625,8 +625,7 @@ static const struct anatop_thermal_platform_data
 static inline void mx6q_icore_init_uart(void)
 {
 	imx6q_add_imx_uart(0, NULL);
-	imx6q_add_imx_uart(1, NULL);
-	
+	imx6q_add_imx_uart(1, NULL);	
 	imx6q_add_imx_uart(3, NULL);
 }
 
@@ -778,6 +777,10 @@ static struct i2c_board_info mxc_i2c0_board_info[] __initdata = {
 };
 
 
+static struct edt_ft5x06_platform_data mx6_icore_ft5x06_data = {
+	.reset_pin      = -1,   /* static high */
+};
+
 static struct i2c_board_info mxc_i2c1_board_info[] __initdata = {
 	{
 		I2C_BOARD_INFO("mxc_hdmi_i2c", 0x50),
@@ -786,12 +789,18 @@ static struct i2c_board_info mxc_i2c1_board_info[] __initdata = {
 
 static struct i2c_board_info mxc_i2c2_board_info[] __initdata = {
 	{
+		I2C_BOARD_INFO("edt-ft5x06", 0x38),
+		.irq  = gpio_to_irq(FT5X06_TS_IRQ),
+		.platform_data = (void *) & mx6_icore_ft5x06_data,
+	},	
+	{
 		I2C_BOARD_INFO("sgtl5000", 0x0a),
 	},
 	{
 		I2C_BOARD_INFO("adv7180", 0x21),
 		.platform_data = (void *)&adv7180_data,
 	},
+
 };
 #if 1
 static void imx6q_icore_usbotg_vbus(bool on)
@@ -830,7 +839,7 @@ static void __init imx6q_icore_init_usb(void)
 	mxc_iomux_set_gpr_register(1, 13, 1, 1);
 #endif
 	mx6_set_otghost_vbus_func(imx6q_icore_usbotg_vbus);
-	mx6_usb_dr_init();
+//	mx6_usb_dr_init();
 }
 
 /* HW Initialization, if return 0, initialization is successful. */
@@ -1350,11 +1359,12 @@ static void __init mx6_icore_board_init(void)
 
 	imx6q_add_imx_snvs_rtc();
 
-	imx6q_add_imx_caam();
+//	imx6q_add_imx_caam(); //TOLTA per conflitto I2C3
 
 	imx6q_add_imx_i2c(0, &mx6q_icore_i2c_data);
 	imx6q_add_imx_i2c(1, &mx6q_icore_i2c_data);
 	imx6q_add_imx_i2c(2, &mx6q_icore_i2c_data);
+
 	i2c_register_board_info(0, mxc_i2c0_board_info,
 			ARRAY_SIZE(mxc_i2c0_board_info));
 	i2c_register_board_info(1, mxc_i2c1_board_info,

@@ -789,4 +789,10 @@ config TOUCHSCREEN_DA9052
         help
           Say y here to support the touchscreen found on
           Dialog Semiconductor DA9052 PMIC
+
+config TOUCHSCREEN_EDT_FT5X06
+        tristate "FocalTech FT5X06"
+        help
+          Say y here to support the touchscreen found on
+          FocalTech FT5X06
 endif
