@@ -79,6 +79,7 @@
 #include <linux/input/edt-ft5x06.h>
 
 #define ICORE_M6_SD1_CD		IMX_GPIO_NR(1, 1)
+#define ICORE_M6_SD1_WP		IMX_GPIO_NR(2, 18)
 #define MAX11801_TS_IRQ         IMX_GPIO_NR(3, 31)
 #define FT5X06_TS_IRQ           IMX_GPIO_NR(1, 7)
 
@@ -100,6 +101,7 @@
 #define ICORE_M6_VOL_DOWN_KEY	IMX_GPIO_NR(4, 5)
 #define ICORE_M6_CSI0_RST	IMX_GPIO_NR(1, 8)
 #define ICORE_M6_CSI0_PWN	IMX_GPIO_NR(1, 6)
+#define ICORE_M6_WF111_RESET	IMX_GPIO_NR(1, 2)
 
 #define ICORE_M6_SD3_WP_PADCFG	(PAD_CTL_PKE | PAD_CTL_PUE |	\
 		PAD_CTL_PUS_22K_UP | PAD_CTL_SPEED_MED |	\
@@ -122,7 +124,7 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	/* CAN1  */
 	MX6Q_PAD_KEY_ROW2__CAN1_RXCAN,
 	MX6Q_PAD_KEY_COL2__CAN1_TXCAN,
-	MX6Q_PAD_GPIO_2__GPIO_1_2,		/* STNDBY */
+	//MX6Q_PAD_GPIO_2__GPIO_1_2,		/* STNDBY */
 	MX6Q_PAD_GPIO_7__GPIO_1_7,		/* NERR */
 	MX6Q_PAD_GPIO_4__GPIO_1_4,		/* Enable */
 
@@ -228,6 +230,18 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 
 	MX6Q_PAD_EIM_D31__GPIO_3_31,   /* MAX11801 irq*/
 
+
+	/* USDHC2 */
+	MX6Q_PAD_SD2_CLK__USDHC2_CLK,
+	MX6Q_PAD_SD2_CMD__USDHC2_CMD,
+	MX6Q_PAD_SD2_DAT0__USDHC2_DAT0,
+	MX6Q_PAD_SD2_DAT1__USDHC2_DAT1,
+	MX6Q_PAD_SD2_DAT2__USDHC2_DAT2,
+	MX6Q_PAD_SD2_DAT3__USDHC2_DAT3,
+
+	MX6Q_PAD_GPIO_2__GPIO_1_2,		/* RESET WF111 */
+
+
 	/* ipu1 csi0 */
 	MX6Q_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
 	MX6Q_PAD_CSI0_DAT13__IPU1_CSI0_D_13,
@@ -248,7 +262,7 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	/* CAN1  */
 	MX6DL_PAD_KEY_ROW2__CAN1_RXCAN,
 	MX6DL_PAD_KEY_COL2__CAN1_TXCAN,
-	MX6DL_PAD_GPIO_2__GPIO_1_2,		/* STNDBY */
+	//MX6DL_PAD_GPIO_2__GPIO_1_2,		/* STNDBY */
 	MX6DL_PAD_GPIO_7__GPIO_1_7,		/* NERR */
 	MX6DL_PAD_GPIO_4__GPIO_1_4,		/* Enable */
 
@@ -353,6 +367,16 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 
 	MX6DL_PAD_EIM_D31__GPIO_3_31,   /* MAX11801 irq*/
 
+	/* USDHC2 */
+	MX6DL_PAD_SD2_CLK__USDHC2_CLK,
+	MX6DL_PAD_SD2_CMD__USDHC2_CMD,
+	MX6DL_PAD_SD2_DAT0__USDHC2_DAT0,
+	MX6DL_PAD_SD2_DAT1__USDHC2_DAT1,
+	MX6DL_PAD_SD2_DAT2__USDHC2_DAT2,
+	MX6DL_PAD_SD2_DAT3__USDHC2_DAT3,
+
+	MX6DL_PAD_GPIO_2__GPIO_1_2, /* reset WF111  */
+
 	/* ipu1 csi0 */
 	MX6DL_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
 	MX6DL_PAD_CSI0_DAT13__IPU1_CSI0_D_13,
@@ -446,9 +470,21 @@ mx6dl_sd##id##_##speed##mhz[] = {		\
 }
 
 
-//static iomux_v3_cfg_t MX6Q_USDHC_PAD_SETTING(1, 50);
-//static iomux_v3_cfg_t MX6Q_USDHC_PAD_SETTING(1, 100);
-//static iomux_v3_cfg_t MX6Q_USDHC_PAD_SETTING(1, 200);
+static iomux_v3_cfg_t MX6Q_USDHC_PAD_SETTING(1, 50);
+static iomux_v3_cfg_t MX6Q_USDHC_PAD_SETTING(1, 100);
+static iomux_v3_cfg_t MX6Q_USDHC_PAD_SETTING(1, 200);
+
+static iomux_v3_cfg_t MX6DL_USDHC_PAD_SETTING(1, 50);
+static iomux_v3_cfg_t MX6DL_USDHC_PAD_SETTING(1, 100);
+static iomux_v3_cfg_t MX6DL_USDHC_PAD_SETTING(1, 200);
+
+static iomux_v3_cfg_t MX6Q_USDHC_PAD_SETTING(2, 50);
+static iomux_v3_cfg_t MX6Q_USDHC_PAD_SETTING(2, 100);
+static iomux_v3_cfg_t MX6Q_USDHC_PAD_SETTING(2, 200);
+
+static iomux_v3_cfg_t MX6DL_USDHC_PAD_SETTING(2, 50);
+static iomux_v3_cfg_t MX6DL_USDHC_PAD_SETTING(2, 100);
+static iomux_v3_cfg_t MX6DL_USDHC_PAD_SETTING(2, 200);
 #endif
 
 
@@ -519,44 +555,100 @@ static int plt_sd4_pad_change(int clock)
 	}
 }
 #else
-static int plt_sd1_pad_change(int clock)
+static int plt_sd1_pad_change(unsigned int index, int clock)
 {
-	
-return 0;
-#if 0
+
 	static enum sd_pad_mode pad_mode = SD_PAD_MODE_LOW_SPEED;
 	if (clock > 100000000) {
 		if (pad_mode == SD_PAD_MODE_HIGH_SPEED)
 			return 0;
 
 		pad_mode = SD_PAD_MODE_HIGH_SPEED;
+		if (cpu_is_mx6q()) 
 		return mxc_iomux_v3_setup_multiple_pads(mx6q_sd1_200mhz,
 					ARRAY_SIZE(mx6q_sd1_200mhz));
+		else
+			return mxc_iomux_v3_setup_multiple_pads(mx6dl_sd1_200mhz,			
+				ARRAY_SIZE(mx6dl_sd1_200mhz));
 	} else if (clock > 52000000) {
 		if (pad_mode == SD_PAD_MODE_MED_SPEED)
 			return 0;
 
 		pad_mode = SD_PAD_MODE_MED_SPEED;
+		if (cpu_is_mx6q()) 
 		return mxc_iomux_v3_setup_multiple_pads(mx6q_sd1_100mhz,
 					ARRAY_SIZE(mx6q_sd1_100mhz));
+		else
+			return mxc_iomux_v3_setup_multiple_pads(mx6dl_sd1_100mhz,			
+				ARRAY_SIZE(mx6dl_sd1_100mhz));
 	} else {
 		if (pad_mode == SD_PAD_MODE_LOW_SPEED)
 			return 0;
 
 		pad_mode = SD_PAD_MODE_LOW_SPEED;
+		if (cpu_is_mx6q()) 
 		return mxc_iomux_v3_setup_multiple_pads(mx6q_sd1_50mhz,
 					ARRAY_SIZE(mx6q_sd1_50mhz));
+		else
+			return mxc_iomux_v3_setup_multiple_pads(mx6dl_sd1_50mhz,			
+				ARRAY_SIZE(mx6dl_sd1_50mhz));
 	}
-#endif
+}
+
+static int plt_sd2_pad_change(unsigned int index, int clock)
+{
+	static enum sd_pad_mode pad_mode = SD_PAD_MODE_LOW_SPEED;
+	if (clock > 100000000) {
+		if (pad_mode == SD_PAD_MODE_HIGH_SPEED)
+			return 0;
+
+		pad_mode = SD_PAD_MODE_HIGH_SPEED;
+		if (cpu_is_mx6q()) 
+			return mxc_iomux_v3_setup_multiple_pads(mx6q_sd2_200mhz,			
+				ARRAY_SIZE(mx6q_sd2_200mhz));
+		else
+			return mxc_iomux_v3_setup_multiple_pads(mx6dl_sd2_200mhz,			
+				ARRAY_SIZE(mx6dl_sd2_200mhz));
+	} else if (clock > 52000000) {
+		if (pad_mode == SD_PAD_MODE_MED_SPEED)
+			return 0;
+
+		pad_mode = SD_PAD_MODE_MED_SPEED;
+		if (cpu_is_mx6q()) 
+			return mxc_iomux_v3_setup_multiple_pads(mx6q_sd2_100mhz,
+					ARRAY_SIZE(mx6q_sd2_100mhz));
+		else
+			return mxc_iomux_v3_setup_multiple_pads(mx6dl_sd2_100mhz,			
+				ARRAY_SIZE(mx6dl_sd2_100mhz));
+	} else {
+		if (pad_mode == SD_PAD_MODE_LOW_SPEED)
+			return 0;
+
+		pad_mode = SD_PAD_MODE_LOW_SPEED;
+		if (cpu_is_mx6q()) 
+			return mxc_iomux_v3_setup_multiple_pads(mx6q_sd2_50mhz,
+					ARRAY_SIZE(mx6q_sd2_50mhz));
+		else
+			return mxc_iomux_v3_setup_multiple_pads(mx6dl_sd2_50mhz,			
+				ARRAY_SIZE(mx6dl_sd2_50mhz));
+	}
 }
 
 #endif
 #if 1
 static const struct esdhc_platform_data mx6q_icore_sd1_data __initconst = {
 	.cd_gpio = ICORE_M6_SD1_CD,
-	.wp_gpio = -1,
+	.wp_gpio = ICORE_M6_SD1_WP,
 	.keep_power_at_suspend = 1,
 	.platform_pad_change = plt_sd1_pad_change,
+};
+static const struct esdhc_platform_data mx6q_icore_sd2_data __initconst = {
+	.always_present = 1,
+	.cd_type = ESDHC_CD_PERMANENT,
+	.cd_gpio = -1,
+	.wp_gpio = -1,
+	.keep_power_at_suspend = 1,
+	.platform_pad_change = plt_sd2_pad_change,
 };
 #else
 static const struct esdhc_platform_data mx6q_icore_sd3_data __initconst = {
@@ -1106,6 +1198,7 @@ static void __init icore_add_device_buttons(void) {}
 
 static struct regulator_consumer_supply icore_vmmc_consumers[] = {
 	REGULATOR_SUPPLY("vmmc", "sdhci-esdhc-imx.0"),
+	REGULATOR_SUPPLY("vmmc", "sdhci-esdhc-imx.1"),
 	REGULATOR_SUPPLY("vmmc", "sdhci-esdhc-imx.2"),
 	REGULATOR_SUPPLY("vmmc", "sdhci-esdhc-imx.3"),
 };
@@ -1178,7 +1271,7 @@ static struct fixed_voltage_config sgtl5000_icore_vddio_reg_config = {
 
 static struct fixed_voltage_config sgtl5000_icore_vddd_reg_config = {
 	.supply_name		= "VDDD",
-	.microvolts		= 0,
+	.microvolts		= 1800000,
 	.gpio			= -1,
 	.init_data		= &sgtl5000_icore_vddd_reg_initdata,
 };
@@ -1382,7 +1475,7 @@ static void __init mx6_icore_board_init(void)
 	imx6_init_fec(fec_data);
 	imx6q_add_pm_imx(0, &mx6q_icore_pm_data);
 	imx6q_add_sdhci_usdhc_imx(0, &mx6q_icore_sd1_data);
-//	imx6q_add_sdhci_usdhc_imx(2, &mx6q_icore_sd3_data);
+	imx6q_add_sdhci_usdhc_imx(1, &mx6q_icore_sd2_data);
 //	imx6q_add_sdhci_usdhc_imx(3, &mx6q_icore_sd4_data);
 
 	if (!cpu_is_mx6q())		// i.Core M6Solo con 256MB RAM
@@ -1453,7 +1546,7 @@ static void __init mx6_icore_board_init(void)
 	imx6q_add_gpmi(&mx6q_gpmi_nand_platform_data);
 	mx6q_csi0_io_init();
 
-
+	gpio_set_value(ICORE_M6_WF111_RESET,1);
 }
 
 
