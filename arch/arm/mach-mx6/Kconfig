@@ -215,6 +215,20 @@ config MACH_MX6Q_ICORE
 	  Include support for i.MX 6Quad Engicam i.Core platform. This includes specific
 	  configurations for the board and its peripherals.
 
+config MACH_MX6Q_ICORE_OF_CAP
+	bool "Support i.Core capacitve open frame"
+       depends on MACH_MX6Q_ICORE
+	help
+	  Include support for Engicam cap open frame. This includes specific
+	  configurations for the board and its peripherals.
+
+config MACH_MX6Q_ICORE_OF_CAP_EDT_7
+	bool "Support i.Core capacitve open frame"
+       depends on MACH_MX6Q_ICORE_OF_CAP
+	help
+	  Include support for Engicam cap open frame. This includes specific
+	  configurations for the board and its peripherals.
+
 config MACH_MX6Q_SABRESD
 	bool "Support i.MX 6Quad SABRESD platform"
 	select ARCH_MX6Q

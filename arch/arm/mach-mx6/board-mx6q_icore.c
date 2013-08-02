@@ -82,6 +82,7 @@
 #define ICORE_M6_SD1_WP		IMX_GPIO_NR(2, 18)
 #define MAX11801_TS_IRQ         IMX_GPIO_NR(3, 31)
 #define FT5X06_TS_IRQ           IMX_GPIO_NR(1, 7)
+#define OFC_FT5X06_TS_IRQ       IMX_GPIO_NR(5, 30)
 
 #define ICORE_M6_SD3_CD		IMX_GPIO_NR(7, 0)
 #define ICORE_M6_SD3_WP		IMX_GPIO_NR(7, 1)
@@ -124,6 +125,11 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	/* CAN1  */
 	MX6Q_PAD_KEY_ROW2__CAN1_RXCAN,
 	MX6Q_PAD_KEY_COL2__CAN1_TXCAN,
+
+	/* CAN2 */
+	MX6Q_PAD_KEY_ROW4__CAN2_RXCAN,
+	MX6Q_PAD_KEY_COL4__CAN2_TXCAN,
+
 	//MX6Q_PAD_GPIO_2__GPIO_1_2,		/* STNDBY */
 	MX6Q_PAD_GPIO_7__GPIO_1_7,		/* NERR */
 	MX6Q_PAD_GPIO_4__GPIO_1_4,		/* Enable */
@@ -207,6 +213,12 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	MX6Q_PAD_EIM_D26__UART2_TXD,
 	MX6Q_PAD_EIM_D27__UART2_RXD,
 
+
+	/* UART3*/
+	MX6Q_PAD_EIM_D23__GPIO_3_23,
+	MX6Q_PAD_EIM_D24__UART3_RXD,
+	MX6Q_PAD_EIM_D25__UART3_TXD,
+
 	/* UART4*/
 	MX6Q_PAD_KEY_COL0__UART4_TXD,
 	MX6Q_PAD_KEY_ROW0__UART4_RXD,
@@ -216,7 +228,7 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 
 
 	/* USB OC pin */
-	MX6Q_PAD_KEY_COL4__USBOH3_USBOTG_OC,
+//	MX6Q_PAD_KEY_COL4__USBOH3_USBOTG_OC,
 
 
 	/* USDHC1 */
@@ -243,7 +255,11 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 
 
 	/* ipu1 csi0 */
+	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
+	MX6Q_PAD_CSI0_DAT12__GPIO_5_30,
+	#else
 	MX6Q_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
+	#endif
 	MX6Q_PAD_CSI0_DAT13__IPU1_CSI0_D_13,
 	MX6Q_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
 	MX6Q_PAD_CSI0_DAT15__IPU1_CSI0_D_15,
@@ -259,9 +275,14 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 };
 
 static iomux_v3_cfg_t mx6dl_icore_pads[] = {
-	/* CAN1  */
+	/* CAN1  */	
 	MX6DL_PAD_KEY_ROW2__CAN1_RXCAN,
 	MX6DL_PAD_KEY_COL2__CAN1_TXCAN,
+
+	/* CAN2  */
+	MX6DL_PAD_KEY_ROW4__CAN2_RXCAN,
+	MX6DL_PAD_KEY_COL4__CAN2_TXCAN,
+
 	//MX6DL_PAD_GPIO_2__GPIO_1_2,		/* STNDBY */
 	MX6DL_PAD_GPIO_7__GPIO_1_7,		/* NERR */
 	MX6DL_PAD_GPIO_4__GPIO_1_4,		/* Enable */
@@ -344,6 +365,11 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_EIM_D26__UART2_TXD,
 	MX6DL_PAD_EIM_D27__UART2_RXD,
 
+	/* UART3*/
+	MX6DL_PAD_EIM_D23__GPIO_3_23,
+	MX6DL_PAD_EIM_D24__UART3_RXD,
+	MX6DL_PAD_EIM_D25__UART3_TXD,
+
 	/* UART4*/
 	MX6DL_PAD_KEY_COL0__UART4_TXD,
 	MX6DL_PAD_KEY_ROW0__UART4_RXD,
@@ -353,7 +379,7 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 
 
 	/* USB OC pin */
-	MX6DL_PAD_KEY_COL4__USBOH3_USBOTG_OC,
+//	MX6DL_PAD_KEY_COL4__USBOH3_USBOTG_OC,
 
 
 	/* USDHC1 */
@@ -378,7 +404,11 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_GPIO_2__GPIO_1_2, /* reset WF111  */
 
 	/* ipu1 csi0 */
+	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
+	MX6DL_PAD_CSI0_DAT12__GPIO_5_30,
+	#else
 	MX6DL_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
+	#endif
 	MX6DL_PAD_CSI0_DAT13__IPU1_CSI0_D_13,
 	MX6DL_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
 	MX6DL_PAD_CSI0_DAT15__IPU1_CSI0_D_15,
@@ -718,6 +748,7 @@ static inline void mx6q_icore_init_uart(void)
 {
 	imx6q_add_imx_uart(0, NULL);
 	imx6q_add_imx_uart(1, NULL);	
+	imx6q_add_imx_uart(2, NULL);	
 	imx6q_add_imx_uart(3, NULL);
 }
 
@@ -882,16 +913,27 @@ static struct i2c_board_info mxc_i2c1_board_info[] __initdata = {
 static struct i2c_board_info mxc_i2c2_board_info[] __initdata = {
 	{
 		I2C_BOARD_INFO("edt-ft5x06", 0x38),
+
+		#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
+		.irq  = gpio_to_irq(OFC_FT5X06_TS_IRQ),
+		#else
 		.irq  = gpio_to_irq(FT5X06_TS_IRQ),
+		#endif
+
 		.platform_data = (void *) & mx6_icore_ft5x06_data,
 	},	
 	{
 		I2C_BOARD_INFO("sgtl5000", 0x0a),
 	},
+	#ifdef	CONFIG_MACH_MX6Q_ICORE_OF_CAP
+	{
+		I2C_BOARD_INFO("pcf8563", 0x51),
+	},
+	#else
 	{
 		I2C_BOARD_INFO("adv7180", 0x21),
-		.platform_data = (void *)&adv7180_data,
 	},
+	#endif
 
 };
 #if 1
@@ -1013,6 +1055,8 @@ static struct gpio mx6q_icore_flexcan_gpios[] = {
 
 static void mx6q_icore_flexcan0_switch(int enable)
 {
+    return;
+/*
 	if (enable) {
 		gpio_set_value(ICORE_M6_CAN1_EN, 1);
 		gpio_set_value(ICORE_M6_CAN1_STBY, 1);
@@ -1020,7 +1064,9 @@ static void mx6q_icore_flexcan0_switch(int enable)
 		gpio_set_value(ICORE_M6_CAN1_EN, 0);
 		gpio_set_value(ICORE_M6_CAN1_STBY, 0);
 	}
+*/
 }
+
 
 static const struct flexcan_platform_data
 	mx6q_icore_flexcan0_pdata __initconst = {
@@ -1407,6 +1453,15 @@ static void __init mx6_icore_board_init(void)
 
 	}
 
+#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP
+	printk("Engicam capacitive touch open frame");
+	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
+	printk(" based on 7 inch. EDT LCD\n");
+	#else
+	printk("\n");
+	#endif
+#endif
+
 #ifdef CONFIG_FEC_1588
 	/* Set GPIO_16 input for IEEE-1588 ts_clk and RMII reference clock
 	 * For MX6 GPR1 bit21 meaning:
@@ -1516,12 +1571,15 @@ static void __init mx6_icore_board_init(void)
 	imx6q_add_hdmi_soc();
 	imx6q_add_hdmi_soc_dai();
 
-	ret = gpio_request_array(mx6q_icore_flexcan_gpios,
-			ARRAY_SIZE(mx6q_icore_flexcan_gpios));
-	if (ret)
-		pr_err("failed to request flexcan1-gpios: %d\n", ret);
-	else
+//	ret = gpio_request_array(mx6q_icore_flexcan_gpios,
+//			ARRAY_SIZE(mx6q_icore_flexcan_gpios));
+//	if (ret)
+//		pr_err("failed to request flexcan1-gpios: %d\n", ret);
+//	else
 		imx6q_add_flexcan0(&mx6q_icore_flexcan0_pdata);
+		imx6q_add_flexcan1(&mx6q_icore_flexcan0_pdata);
+
+
 
 	clko2 = clk_get(NULL, "clko2_clk");
 	if (IS_ERR(clko2))
