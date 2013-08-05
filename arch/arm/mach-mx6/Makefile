@@ -23,3 +23,4 @@ obj-$(CONFIG_USB_EHCI_ARC_H1) += usb_h1.o
 obj-$(CONFIG_MACH_IMX_BLUETOOTH_RFKILL) += mx6_bt_rfkill.o
 obj-$(CONFIG_PCI_MSI) += msi.o
 obj-$(CONFIG_MACH_MX6Q_ICORE) += board-mx6q_icore.o
+obj-$(CONFIG_MACH_ICORE_M6_RQS) += board-icore-m6-rqs.o

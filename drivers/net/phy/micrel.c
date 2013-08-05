@@ -187,6 +187,21 @@ static struct phy_driver ksz9021_driver = {
 	.driver		= { .owner = THIS_MODULE, },
 };
 
+static struct phy_driver ksz9031_driver = {
+	.phy_id		= PHY_ID_KSZ9031,
+	.phy_id_mask	= 0x00ffffff,
+	.name		= "Micrel KSZ9031 Gigabit PHY",
+	.features	= (PHY_GBIT_FEATURES | SUPPORTED_Pause
+				| SUPPORTED_Asym_Pause),
+	.flags		= PHY_HAS_MAGICANEG | PHY_HAS_INTERRUPT,
+	.config_init	= kszphy_config_init,
+	.config_aneg	= genphy_config_aneg,
+	.read_status	= genphy_read_status,
+	.ack_interrupt	= kszphy_ack_interrupt,
+	.config_intr	= ksz9021_config_intr,
+	.driver		= { .owner = THIS_MODULE, },
+};
+
 static int __init ksphy_init(void)
 {
 	int ret;
@@ -209,8 +224,14 @@ static int __init ksphy_init(void)
 	if (ret)
 		goto err5;
 
+	ret = phy_driver_register(&ksz9031_driver);
+	if (ret)
+		goto err6;
+
 	return 0;
 
+err6:
+	phy_driver_unregister(&ksz9031_driver);
 err5:
 	phy_driver_unregister(&ks8041_driver);
 err4:
@@ -245,6 +266,7 @@ static struct mdio_device_id __maybe_unused micrel_tbl[] = {
 	{ PHY_ID_KS8737, 0x00ffffff },
 	{ PHY_ID_KS8041, 0x00ffffff },
 	{ PHY_ID_KS8051, 0x00ffffff },
+	{ PHY_ID_KSZ9031, 0x00ffffff },
 	{ }
 };
 

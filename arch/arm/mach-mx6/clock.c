@@ -5609,6 +5609,22 @@ int __init mx6_clocks_init(unsigned long ckil, unsigned long osc,
 	__raw_writel(reg, base + 0x04);
 	iounmap(base);
 
+#ifdef CONFIG_MACH_ICORE_M6_RQS
+        //MP: added .. to be fix .. 24MHz for USB
+
+	reg = __raw_readl(ANADIG_MISC1_REG);
+	reg &= ~ANATOP_LVDS_CLK2_IBEN_MASK;
+	__raw_writel(reg, ANADIG_MISC1_REG);
+
+	reg = __raw_readl(ANADIG_MISC1_REG);
+	reg &= ~(0x1F <<5);
+	reg |= (0x12 <<5);
+	__raw_writel(reg, ANADIG_MISC1_REG);
+
+	reg = __raw_readl(ANADIG_MISC1_REG);
+	reg |= ANATOP_LVDS_CLK2_OBEN_MASK;
+	__raw_writel(reg, ANADIG_MISC1_REG);
+#endif
 	return 0;
 
 }
