@@ -1,0 +1,11 @@
+--- arch/arm/plat-mxc/cpufreq.c	2013-08-02 14:40:23.987619153 +0200
++++ linux-3.0.35/./arch/arm/plat-mxc/cpufreq.c	2013-07-26 09:47:03.194434043 +0200
+@@ -123,7 +123,7 @@
+ 		ret = regulator_set_voltage(cpu_regulator, gp_volt,
+ 					    gp_volt);
+ 		if (ret < 0) {
+-			//printk(KERN_ERR "COULD NOT SET GP VOLTAGE!!!!\n"); TOLTO_MM
++			printk(KERN_ERR "COULD NOT SET GP VOLTAGE!!!!\n");
+ 			goto err5;
+ 		}
+ 		if (!IS_ERR(soc_regulator)) {

@@ -109,7 +109,9 @@ int set_cpu_freq(int freq)
 		ret = regulator_set_voltage(cpu_regulator, gp_volt,
 					    gp_volt);
 		if (ret < 0) {
+			#ifdef TOLTO_OUTPUT_ERR			
 			printk(KERN_ERR "COULD NOT SET GP VOLTAGE!!!!\n");
+			#endif
 			goto err3;
 		}
 	}
