@@ -83,6 +83,8 @@
 #define MAX11801_TS_IRQ         IMX_GPIO_NR(3, 31)
 #define FT5X06_TS_IRQ           IMX_GPIO_NR(1, 7)
 #define OFC_FT5X06_TS_IRQ       IMX_GPIO_NR(5, 30)
+#define OFC_LVDS_ENABLE		IMX_GPIO_NR(1, 7)
+#define UART3_CS485		IMX_GPIO_NR(3, 23)
 
 #define ICORE_M6_SD3_CD		IMX_GPIO_NR(7, 0)
 #define ICORE_M6_SD3_WP		IMX_GPIO_NR(7, 1)
@@ -872,6 +874,7 @@ static struct platform_device mx6_icore_audio_device = {
 	.name = "imx-sgtl5000",
 };
 
+#ifndef	CONFIG_MACH_MX6Q_ICORE_OF_CAP
 static void adv7180_pwdn(int pwdn)
 {
 }
@@ -885,6 +888,7 @@ static struct fsl_mxc_tvin_platform_data adv7180_data = {
 	.reset		= NULL,
 	.cvbs		= true,
 };
+#endif
 
 static struct imxi2c_platform_data mx6q_icore_i2c_data = {
 	.bitrate = 100000,
@@ -913,9 +917,10 @@ static struct i2c_board_info mxc_i2c1_board_info[] __initdata = {
 static struct i2c_board_info mxc_i2c2_board_info[] __initdata = {
 	{
 		I2C_BOARD_INFO("edt-ft5x06", 0x38),
-
-		#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
-		.irq  = gpio_to_irq(OFC_FT5X06_TS_IRQ),
+		#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP
+			#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
+			.irq  = gpio_to_irq(OFC_FT5X06_TS_IRQ),
+			#endif
 		#else
 		.irq  = gpio_to_irq(FT5X06_TS_IRQ),
 		#endif
@@ -1537,6 +1542,20 @@ static void __init mx6_icore_board_init(void)
 	mx6q_csi0_io_init();
 
 	gpio_set_value(ICORE_M6_WF111_RESET,1);
+
+	#ifdef CONFIG_SERIAL_RS485_ENABLE
+	gpio_request(UART3_CS485, "UART3_CS485");
+	gpio_direction_output(UART3_CS485, 0);
+	gpio_set_value(UART3_CS485, 0);
+	#endif
+
+	// Init LVDS for openframe capacitive
+	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP
+	gpio_request(OFC_LVDS_ENABLE, "OFC_LVDS_ENABLE");
+	gpio_direction_output(OFC_LVDS_ENABLE, 0);
+	gpio_set_value(OFC_LVDS_ENABLE, 0);
+	gpio_free(OFC_LVDS_ENABLE);
+	#endif
 }
 
 

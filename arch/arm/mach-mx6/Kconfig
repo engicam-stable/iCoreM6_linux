@@ -220,14 +220,14 @@ config MACH_MX6Q_ICORE_OF_CAP
        depends on MACH_MX6Q_ICORE
 	help
 	  Include support for Engicam cap open frame. This includes specific
-	  configurations for the board and its peripherals.
+	  configurations for the board and its peripherals; included LVDS 
+	  board configuration.
 
 config MACH_MX6Q_ICORE_OF_CAP_EDT_7
-	bool "Support i.Core capacitve open frame"
+	bool "Support i.Core capacitive EDT open frame"
        depends on MACH_MX6Q_ICORE_OF_CAP
 	help
-	  Include support for Engicam cap open frame. This includes specific
-	  configurations for the board and its peripherals.
+	  Include support for Engicam EDT cap open frame.
 
 config MACH_ICORE_M6_RQS
 	bool "Support i.Core M6 RQS platform"

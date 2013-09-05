@@ -1,0 +1,63 @@
+Binary file ./boot/Image matches
+./mach-mxs/gpio.c:	__mxs_clrl(1 << index, port->base + PINCTRL_IRQSTAT(port->id));
+./mach-mxs/gpio.c:		__mxs_setl(1 << index, port->base + PINCTRL_IRQEN(port->id));
+./mach-mxs/gpio.c:		__mxs_setl(1 << index, port->base + PINCTRL_PIN2IRQ(port->id));
+./mach-mxs/gpio.c:		__mxs_clrl(1 << index, port->base + PINCTRL_IRQEN(port->id));
+./mach-mxs/gpio.c:	pin_addr = port->base + PINCTRL_IRQLEV(port->id);
+./mach-mxs/gpio.c:	pin_addr = port->base + PINCTRL_IRQPOL(port->id);
+./mach-mxs/gpio.c:	u32 gpio_irq_no_base = port->virtual_irq_start;
+./mach-mxs/gpio.c:	irq_stat = __raw_readl(port->base + PINCTRL_IRQSTAT(port->id)) &
+./mach-mxs/gpio.c:			__raw_readl(port->base + PINCTRL_IRQEN(port->id));
+./mach-mxs/gpio.c:		if (port->irq_high && (gpio_idx >= 16))
+./mach-mxs/gpio.c:			enable_irq_wake(port->irq_high);
+./mach-mxs/gpio.c:			enable_irq_wake(port->irq);
+./mach-mxs/gpio.c:		if (port->irq_high && (gpio_idx >= 16))
+./mach-mxs/gpio.c:			disable_irq_wake(port->irq_high);
+./mach-mxs/gpio.c:			disable_irq_wake(port->irq);
+./mach-mxs/gpio.c:	void __iomem *pin_addr = port->base + PINCTRL_DOE(port->id);
+./mach-mxs/gpio.c:	return (__raw_readl(port->base + PINCTRL_DIN(port->id)) >> offset) & 1;
+./mach-mxs/gpio.c:	void __iomem *pin_addr = port->base + PINCTRL_DOUT(port->id);
+./mach-mxs/gpio.c:	return port->virtual_irq_start + offset;
+./mach-sa1100/simpad.c:	if (port->mapbase == (u_int)&Ser1UTCR0) {
+./mach-sa1100/h3xxx.c:	if (port->mapbase == _Ser3UTCR0) {
+./mach-sa1100/h3xxx.c:	if (port->mapbase == _Ser3UTCR0) {
+./mach-sa1100/h3xxx.c:	if (port->mapbase == _Ser3UTCR0) {
+./mach-sa1100/h3xxx.c:	if (port->mapbase == _Ser3UTCR0) {
+./mach-sa1100/hackkit.c:	if (port->mapbase == _Ser1UTCR0) {
+./mach-sa1100/neponset.c:	if (port->mapbase == _Ser1UTCR0) {
+./mach-sa1100/neponset.c:	} else if (port->mapbase == _Ser3UTCR0) {
+./mach-sa1100/neponset.c:	if (port->mapbase == _Ser1UTCR0) {
+./mach-sa1100/neponset.c:	} else if (port->mapbase == _Ser3UTCR0) {
+./mach-sa1100/assabet.c:	if (port->mapbase == _Ser1UTCR0) {
+./mach-sa1100/assabet.c:	if (port->mapbase == _Ser1UTCR0) {
+./mach-sa1100/assabet.c:	if (port->mapbase == _Ser1UTCR0) {
+./mach-sa1100/assabet.c:	} else if (port->mapbase == _Ser3UTCR0) {
+./plat-mxc/gpio.c:	__raw_writel(1 << index, port->base + GPIO_ISR);
+./plat-mxc/gpio.c:	l = __raw_readl(port->base + GPIO_IMR);
+./plat-mxc/gpio.c:	__raw_writel(l, port->base + GPIO_IMR);
+./plat-mxc/gpio.c:	void __iomem *reg = port->base;
+./plat-mxc/gpio.c:	port->both_edges &= ~(1 << (gpio & 31));
+./plat-mxc/gpio.c:		val = mxc_gpio_get(&port->chip, gpio & 31);
+./plat-mxc/gpio.c:		port->both_edges |= 1 << (gpio & 31);
+./plat-mxc/gpio.c:	void __iomem *reg = port->base;
+./plat-mxc/gpio.c:	u32 gpio_irq_no_base = port->virtual_irq_start;
+./plat-mxc/gpio.c:		if (port->both_edges & (1 << irqoffset))
+./plat-mxc/gpio.c:	irq_stat = __raw_readl(port->base + GPIO_ISR) &
+./plat-mxc/gpio.c:			__raw_readl(port->base + GPIO_IMR);
+./plat-mxc/gpio.c:		if (port->irq_high && (gpio_idx >= 16))
+./plat-mxc/gpio.c:			enable_irq_wake(port->irq_high);
+./plat-mxc/gpio.c:			enable_irq_wake(port->irq);
+./plat-mxc/gpio.c:		if (port->irq_high && (gpio_idx >= 16))
+./plat-mxc/gpio.c:			disable_irq_wake(port->irq_high);
+./plat-mxc/gpio.c:			disable_irq_wake(port->irq);
+./plat-mxc/gpio.c:	spin_lock_irqsave(&port->lock, flags);
+./plat-mxc/gpio.c:	l = __raw_readl(port->base + GPIO_GDIR);
+./plat-mxc/gpio.c:	__raw_writel(l, port->base + GPIO_GDIR);
+./plat-mxc/gpio.c:	spin_unlock_irqrestore(&port->lock, flags);
+./plat-mxc/gpio.c:	void __iomem *reg = port->base + GPIO_DR;
+./plat-mxc/gpio.c:	spin_lock_irqsave(&port->lock, flags);
+./plat-mxc/gpio.c:	spin_unlock_irqrestore(&port->lock, flags);
+./plat-mxc/gpio.c:	return (__raw_readl(port->base + GPIO_PSR) >> offset) & 1;
+./plat-omap/include/plat/serial.h: * Addded OMAP4 support- Santosh Shilimkar <santosh.shilimkar@ti.com>
+./mach-omap2/opp2xxx.h: * #5a	(ratio1) baseport-target, target DPLL = 266*2 = 532MHz
+./mach-omap2/opp2xxx.h: * #3	(ratio2) baseport-target, target DPLL = 330*2 = 660MHz

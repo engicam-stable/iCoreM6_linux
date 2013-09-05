@@ -105,6 +105,15 @@ static int g_ldb_mode;
 
 static struct fb_videomode ldb_modedb[] = {
 	{
+	 /* 800x480 @ 60 Hz STARTERKIT 7'' */ 
+	 "Amp-WD" , 60, 800, 480, 30000, 
+	 30, 30, 
+	 5, 5, 
+	 64, 20,
+	 FB_SYNC_CLK_LAT_FALL,
+	 FB_VMODE_NONINTERLACED,
+	 0,},	
+	{
 	 "LDB-WXGA", 60, 1280, 800, 14065,
 	 40, 40,
 	 10, 3,

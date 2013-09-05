@@ -838,6 +838,13 @@ config SERIAL_IMX_CONSOLE
 	  your boot loader (lilo or loadlin) about how to pass options to the
 	  kernel at boot time.)
 
+config SERIAL_RS485_ENABLE
+	bool "Engicam iCoreM6 RS485 support"
+	depends on SERIAL_IMX
+	select SERIAL_CORE
+	help
+	  Driver for Engicam iCoreM6 RS485 on UART3. Autoenabled CS.
+
 config SERIAL_UARTLITE
 	tristate "Xilinx uartlite serial port support"
 	depends on PPC32 || MICROBLAZE || MFD_TIMBERDALE
