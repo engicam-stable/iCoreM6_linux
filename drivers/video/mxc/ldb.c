@@ -114,6 +114,12 @@ static struct fb_videomode ldb_modedb[] = {
 	 FB_VMODE_NONINTERLACED,
 	 0,},	
 	{
+	 /* 1360x768 */
+	 "LVDS-HDR" , 60, 1360, 768, 13468, 40, 40, 5, 5, 5, 5,
+	 FB_SYNC_CLK_LAT_FALL,
+	 FB_VMODE_NONINTERLACED,
+	 0,},
+	{
 	 "LDB-WXGA", 60, 1280, 800, 14065,
 	 40, 40,
 	 10, 3,

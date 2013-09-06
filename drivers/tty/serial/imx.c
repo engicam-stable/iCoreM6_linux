@@ -1277,15 +1277,17 @@ static void imx_shutdown(struct uart_port *port)
 		writel(temp, sport->port.membase + UCR4);
 	}
 
-	//if RS485 turn back it in standard RS232
+	spin_unlock_irqrestore(&sport->port.lock, flags);
+
+	#ifdef TURNBACK_SERIAL_ON_STANDARD_RS232
 	if(sport->rs485.flags & SER_RS485_ENABLED)
 	{
 		imx_rs485_stop_tx(sport);
 		sport->rs485.flags &= ~SER_RS485_ENABLED;
 		imx_config_rs485(port,&sport->rs485);
 	}
-
-	spin_unlock_irqrestore(&sport->port.lock, flags);
+	#endif
+	
 	clk_disable(sport->clk);
 }
 
