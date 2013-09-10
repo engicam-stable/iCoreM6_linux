@@ -790,6 +790,19 @@ config TOUCHSCREEN_DA9052
           Say y here to support the touchscreen found on
           Dialog Semiconductor DA9052 PMIC
 
+config TOUCHSCREEN_ILI210X
+	tristate "Ilitek ILI210X based touchscreen"
+	depends on I2C
+	help
+	  Say Y here if you have a ILI210X based touchscreen
+	  controller. This driver supports models ILI2102,
+	  ILI2102s, ILI2103, ILI2103s and ILI2105.
+
+	  If unsure, say N.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called ili210x.
+
 config TOUCHSCREEN_EDT_FT5X06
         tristate "FocalTech FT5X06"
         help

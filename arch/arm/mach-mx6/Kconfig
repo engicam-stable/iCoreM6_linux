@@ -224,10 +224,16 @@ config MACH_MX6Q_ICORE_OF_CAP
 	  board configuration.
 
 config MACH_MX6Q_ICORE_OF_CAP_EDT_7
-	bool "Support i.Core capacitive EDT open frame"
+	bool "Support i.Core capacitive open frame Edt LCD"
        depends on MACH_MX6Q_ICORE_OF_CAP
 	help
-	  Include support for Engicam EDT cap open frame.
+	  Include support for Engicam Edt capacitive open frame.
+
+config MACH_MX6Q_ICORE_OF_CAP_AMPIRE
+	bool "Support i.Core capacitive open frame Ampire LCD"
+       depends on MACH_MX6Q_ICORE_OF_CAP
+	help
+	  Include support for Engicam Ampire capacitive open frame.
 
 config MACH_ICORE_M6_RQS
 	bool "Support i.Core M6 RQS platform"

@@ -77,6 +77,7 @@
 
 #include <linux/mfd/mxc-hdmi-core.h>
 #include <linux/input/edt-ft5x06.h>
+#include <linux/input/ili210x.h>
 
 #define ICORE_M6_SD1_CD		IMX_GPIO_NR(1, 1)
 #define ICORE_M6_SD1_WP		IMX_GPIO_NR(2, 18)
@@ -257,7 +258,7 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 
 
 	/* ipu1 csi0 */
-	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
+	#if (defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7 || defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE)
 	MX6Q_PAD_CSI0_DAT12__GPIO_5_30,
 	#else
 	MX6Q_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
@@ -406,7 +407,7 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_GPIO_2__GPIO_1_2, /* reset WF111  */
 
 	/* ipu1 csi0 */
-	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
+	#if (defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7 || defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE)
 	MX6DL_PAD_CSI0_DAT12__GPIO_5_30,
 	#else
 	MX6DL_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
@@ -908,6 +909,19 @@ static struct edt_ft5x06_platform_data mx6_icore_ft5x06_data = {
 	.reset_pin      = -1,   /* static high */
 };
 
+#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE
+bool ili210x_get_pendown_state (void)
+{
+	return !gpio_get_value(OFC_FT5X06_TS_IRQ);
+}
+
+static struct ili210x_platform_data mx6_icore_ili210x_data = {          
+        .irq_flags		= (IRQF_TRIGGER_FALLING | IRQF_ONESHOT),        
+        .poll_period		= 20,       
+        .get_pendown_state	= ili210x_get_pendown_state,
+};                                      
+#endif
+
 static struct i2c_board_info mxc_i2c1_board_info[] __initdata = {
 	{
 		I2C_BOARD_INFO("mxc_hdmi_i2c", 0x50),
@@ -927,6 +941,13 @@ static struct i2c_board_info mxc_i2c2_board_info[] __initdata = {
 
 		.platform_data = (void *) & mx6_icore_ft5x06_data,
 	},	
+	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE
+	{
+		I2C_BOARD_INFO("ili210x", 0x41),
+		.platform_data = (void *) & mx6_icore_ili210x_data,
+		.irq  = gpio_to_irq(OFC_FT5X06_TS_IRQ),
+	},
+	#endif
 	{
 		I2C_BOARD_INFO("sgtl5000", 0x0a),
 	},
@@ -1257,7 +1278,7 @@ static struct regulator_init_data sgtl5000_icore_vddd_reg_initdata = {
 
 static struct fixed_voltage_config sgtl5000_icore_vdda_reg_config = {
 	.supply_name		= "VDDA",
-	.microvolts		= 2500000,
+	.microvolts		= 3300000,
 	.gpio			= -1,
 	.init_data		= &sgtl5000_icore_vdda_reg_initdata,
 };
@@ -1271,7 +1292,7 @@ static struct fixed_voltage_config sgtl5000_icore_vddio_reg_config = {
 
 static struct fixed_voltage_config sgtl5000_icore_vddd_reg_config = {
 	.supply_name		= "VDDD",
-	.microvolts		= 1800000,
+	.microvolts		= 1200000,
 	.gpio			= -1,
 	.init_data		= &sgtl5000_icore_vddd_reg_initdata,
 };
@@ -1402,6 +1423,8 @@ static void __init mx6_icore_board_init(void)
 	printk("Engicam capacitive touch open frame");
 	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
 	printk(" based on 7 inch. EDT LCD\n");
+	#elif CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE
+	printk(" based on 7 inch. Ampire LCD\n");
 	#else
 	printk("\n");
 	#endif
