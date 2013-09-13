@@ -74,8 +74,13 @@ static struct cpu_op mx6q_cpu_op_1_2G[] = {
 	  .soc_voltage = 1175000,
 	  .cpu_voltage = 950000,},
 #endif
-
-
+	 {
+	  .pll_rate = 200000000,
+	  .cpu_rate = 200000000,
+	  .cpu_podf = 0,
+	  .pu_voltage = 1175000,
+	  .soc_voltage = 1175000,
+	  .cpu_voltage = 1075000,},
 };
 
 /* working point(wp): 0 - 1GHz; 1 - 792MHz, 2 - 498MHz 3 - 396MHz */
@@ -120,6 +125,13 @@ static struct cpu_op mx6q_cpu_op_1G[] = {
 	  .soc_voltage = 1175000,
 	  .cpu_voltage = 950000,},
 #endif
+	 {
+	  .pll_rate = 200000000,
+	  .cpu_rate = 200000000,
+	  .cpu_podf = 0,
+	  .pu_voltage = 1175000,
+	  .soc_voltage = 1175000,
+	  .cpu_voltage = 1075000,},
 };
 
 static struct cpu_op mx6q_cpu_op[] = {
@@ -156,6 +168,13 @@ static struct cpu_op mx6q_cpu_op[] = {
 	  .soc_voltage = 1175000,
 	  .cpu_voltage = 950000,},
 #endif
+	 {
+	  .pll_rate = 200000000,
+	  .cpu_rate = 200000000,
+	  .cpu_podf = 0,
+	  .pu_voltage = 1175000,
+	  .soc_voltage = 1175000,
+	  .cpu_voltage = 1075000,},
 };
 
 /* working point(wp): 0 - 1.2GHz; 1 - 800MHz, 2 - 400MHz, 3  - 200MHz */
