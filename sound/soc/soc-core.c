@@ -71,6 +71,10 @@ static int pmdown_time = 5000;
 module_param(pmdown_time, int, 0);
 MODULE_PARM_DESC(pmdown_time, "DAPM stream powerdown time (msecs)");
 
+static long bias_always_on= 0;
+module_param(bias_always_on, long, 0);
+MODULE_PARM_DESC(bias_always_on, "1 - output bias - always on ");
+
 /* returns the minimum number of bytes needed to represent
  * a particular given value */
 static int min_bytes_needed(unsigned long val)
@@ -205,6 +209,35 @@ static ssize_t pmdown_time_set(struct device *dev,
 }
 
 static DEVICE_ATTR(pmdown_time, 0644, pmdown_time_show, pmdown_time_set);
+
+
+static ssize_t bias_always_on_show(struct device *dev,
+				struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%ld\n", bias_always_on);
+}
+
+static ssize_t bias_always_on_set(struct device *dev,
+			       struct device_attribute *attr,
+			       const char *buf, size_t count)
+{	
+	int ret;
+
+	ret = strict_strtol(buf, 10, &bias_always_on);
+	if (ret)
+		return ret;
+
+	if(bias_always_on)
+	{
+		//ML
+		
+	}
+
+	return count;
+}
+
+static DEVICE_ATTR(bias_always_on, 0644, bias_always_on_show, bias_always_on_set);
+
 
 #ifdef CONFIG_DEBUG_FS
 static int codec_reg_open_file(struct inode *inode, struct file *file)
@@ -770,8 +803,12 @@ static int soc_codec_close(struct snd_pcm_substream *substream)
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
 		/* start delayed pop wq here for playback streams */
 		codec_dai->pop_wait = 1;
-		schedule_delayed_work(&rtd->delayed_work,
-			msecs_to_jiffies(rtd->pmdown_time));
+		//ML
+		if(!bias_always_on)
+		{
+				schedule_delayed_work(&rtd->delayed_work,
+					msecs_to_jiffies(rtd->pmdown_time));
+		}
 	} else {
 		/* capture streams can be powered down now */
 		snd_soc_dapm_stream_event(rtd,
@@ -1440,6 +1477,7 @@ static void soc_remove_dai_link(struct snd_soc_card *card, int num)
 	if (rtd->dev_registered) {
 		device_remove_file(&rtd->dev, &dev_attr_pmdown_time);
 		device_remove_file(&rtd->dev, &dev_attr_codec_reg);
+		device_remove_file(&rtd->dev,&dev_attr_bias_always_on);
 		device_unregister(&rtd->dev);
 		rtd->dev_registered = 0;
 	}
@@ -1722,6 +1760,12 @@ static int soc_probe_dai_link(struct snd_soc_card *card, int num)
 	ret = device_create_file(&rtd->dev, &dev_attr_pmdown_time);
 	if (ret < 0)
 		printk(KERN_WARNING "asoc: failed to add pmdown_time sysfs\n");
+
+//ML
+	ret = device_create_file(&rtd->dev, &dev_attr_bias_always_on);
+	if (ret < 0)
+		printk(KERN_WARNING "asoc: failed to add bias_always_on sysfs\n");
+
 
 	/* create the pcm */
 	ret = soc_new_pcm(rtd, num);
