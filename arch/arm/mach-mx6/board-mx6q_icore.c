@@ -1423,10 +1423,12 @@ static void __init mx6_icore_board_init(void)
 	printk("Engicam capacitive touch open frame");
 	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
 	printk(" based on 7 inch. EDT LCD\n");
-	#elif CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE
-	printk(" based on 7 inch. Ampire LCD\n");
 	#else
-	printk("\n");
+		#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE
+		printk(" based on 7 inch. Ampire LCD\n");
+		#else
+		printk("\n");
+		#endif
 	#endif
 #endif
 
