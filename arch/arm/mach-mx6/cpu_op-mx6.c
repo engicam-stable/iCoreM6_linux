@@ -193,6 +193,13 @@ static struct cpu_op mx6dl_cpu_op_1_2G[] = {
 	 .pu_voltage = 1175000,
 	 .soc_voltage = 1175000,
 	 .cpu_voltage = 1175000,},
+	{
+	  .pll_rate = 396000000,
+	  .cpu_rate = 396000000,
+	  .cpu_podf = 0,
+	  .pu_voltage = 1175000,
+	  .soc_voltage = 1175000,
+	  .cpu_voltage = 950000,},
 	 {
 	  .pll_rate = 200000000,
 	  .cpu_rate = 200000000,
@@ -218,6 +225,13 @@ static struct cpu_op mx6dl_cpu_op_1G[] = {
 	 .soc_voltage = 1175000,
 	 .cpu_voltage = 1175000,},
 	{
+	  .pll_rate = 396000000,
+	  .cpu_rate = 396000000,
+	  .cpu_podf = 0,
+	  .pu_voltage = 1175000,
+	  .soc_voltage = 1175000,
+	  .cpu_voltage = 950000,},
+	{
 	 .pll_rate = 200000000,
 	 .cpu_rate = 200000000,
 	 .cpu_podf = 0,
@@ -233,6 +247,13 @@ static struct cpu_op mx6dl_cpu_op[] = {
 	 .pu_voltage = 1175000,
 	 .soc_voltage = 1175000,
 	 .cpu_voltage = 1175000,},
+	{
+	  .pll_rate = 396000000,
+	  .cpu_rate = 396000000,
+	  .cpu_podf = 0,
+	  .pu_voltage = 1175000,
+	  .soc_voltage = 1175000,
+	  .cpu_voltage = 950000,},
 	 {
 	  .pll_rate = 200000000,
 	  .cpu_rate = 200000000,
@@ -265,6 +286,13 @@ static struct cpu_op mx6sl_cpu_op_1G[] = {
 	 .pu_voltage = 1150000,
 	 .soc_voltage = 1150000,
 	 .cpu_voltage = 950000,},
+	{
+	  .pll_rate = 200000000,
+	  .cpu_rate = 200000000,
+	  .cpu_podf = 0,
+	  .pu_voltage = 1175000,
+	  .soc_voltage = 1175000,
+	  .cpu_voltage = 1075000,},
 };
 
 static struct cpu_op mx6sl_cpu_op[] = {
