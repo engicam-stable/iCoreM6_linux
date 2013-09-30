@@ -1432,6 +1432,10 @@ static void __init mx6_icore_board_init(void)
 	#endif
 #endif
 
+	#ifdef CONFIG_MACH_MX6Q_MINIMUM_FREQ400
+	printk("CPU Minum freq forced to 400 Mhz.\n");
+	#endif
+
 #ifdef CONFIG_FEC_1588
 	/* Set GPIO_16 input for IEEE-1588 ts_clk and RMII reference clock
 	 * For MX6 GPR1 bit21 meaning:

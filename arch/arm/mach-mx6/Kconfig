@@ -215,6 +215,13 @@ config MACH_MX6Q_ICORE
 	  Include support for i.MX 6Quad Engicam i.Core platform. This includes specific
 	  configurations for the board and its peripherals.
 
+config MACH_MX6Q_MINIMUM_FREQ400
+	bool "Set i.Core minimum freq 400 Mhz"
+       depends on MACH_MX6Q_ICORE || MACH_ICORE_M6_RQS
+	help
+	  This features set the minimum CPU clock frequency to 400 Mhz instead of 200 Mhz.
+	  Recommended option for the use of video codecs.
+
 config MACH_MX6Q_ICORE_OF_CAP
 	bool "Support i.Core capacitve open frame"
        depends on MACH_MX6Q_ICORE
