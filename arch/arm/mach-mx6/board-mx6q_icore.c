@@ -107,6 +107,9 @@
 #define ICORE_M6_CSI0_PWN	IMX_GPIO_NR(1, 6)
 #define ICORE_M6_WF111_RESET	IMX_GPIO_NR(1, 2)
 
+
+#define MX6_ICORE_BACKLIGHT3 	IMX_GPIO_NR(2, 9)
+
 #define ICORE_M6_SD3_WP_PADCFG	(PAD_CTL_PKE | PAD_CTL_PUE |	\
 		PAD_CTL_PUS_22K_UP | PAD_CTL_SPEED_MED |	\
 		PAD_CTL_DSE_40ohm | PAD_CTL_HYS)
@@ -141,6 +144,8 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	MX6Q_PAD_GPIO_0__CCM_CLKO,		/* SGTL500 sys_mclk */
 	MX6Q_PAD_GPIO_3__CCM_CLKO2,		/* J5 - Camera MCLK */
 
+
+	MX6Q_PAD_SD4_DAT1__PWM3_PWMO,		/* PWM per back light	*/
 
 	/* ENET */
 	MX6Q_PAD_ENET_CRS_DV__ENET_RX_EN 	,
@@ -294,6 +299,8 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_GPIO_0__CCM_CLKO,		/* SGTL500 sys_mclk */
 	MX6DL_PAD_GPIO_3__CCM_CLKO2,		/* J5 - Camera MCLK */
 
+
+	MX6DL_PAD_SD4_DAT1__PWM3_PWMO	,	/* pwm per backlight */
 
 	/* ENET */
 	MX6DL_PAD_ENET_CRS_DV__ENET_RX_EN 	,
@@ -1336,14 +1343,15 @@ static int imx6q_init_audio(void)
 	return 0;
 }
 
-#if 0
-static struct platform_pwm_backlight_data mx6_icore_pwm_backlight_data = {
-	.pwm_id = 3,
+
+static struct platform_pwm_backlight_data mx6_icore_pwm0_backlight_data = {
+	.pwm_id = 2,
 	.max_brightness = 255,
-	.dft_brightness = 128,
-	.pwm_period_ns = 50000,
+	.dft_brightness = 200,
+	.pwm_period_ns = 100000,
 };
-#endif
+
+
 static struct mxc_dvfs_platform_data icore_dvfscore_data = {
 	.reg_id = "cpu_vddgp",
 	.clk1_id = "cpu_clk",
@@ -1531,6 +1539,14 @@ static void __init mx6_icore_board_init(void)
 	imx6q_add_mxc_pwm_backlight(0, &mx6_icore_pwm0_backlight_data);
 	imx6q_add_mxc_pwm_backlight(3, &mx6_icore_pwm_backlight_data);
 #endif
+
+
+	gpio_request(MX6_ICORE_BACKLIGHT3, "backlight-pwm3");
+	gpio_direction_output(MX6_ICORE_BACKLIGHT3, 0);
+
+	imx6q_add_mxc_pwm(2);
+	imx6q_add_mxc_pwm_backlight(0, &mx6_icore_pwm0_backlight_data);
+
 	imx6q_add_otp();
 	imx6q_add_viim();
 	imx6q_add_imx2_wdt(0, NULL);
