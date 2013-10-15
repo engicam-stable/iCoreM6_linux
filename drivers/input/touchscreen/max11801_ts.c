@@ -247,6 +247,7 @@ static irqreturn_t max11801_ts_interrupt(int irq, void *dev_id)
 						input_report_abs(data->input_dev, ABS_X, x);
 						input_report_abs(data->input_dev, ABS_Y, y);
 						input_report_abs(data->input_dev, ABS_PRESSURE, 1);
+						input_event(data->input_dev, EV_KEY, BTN_TOUCH, 1);
 						input_sync(data->input_dev);				
 					}
 					else
@@ -267,6 +268,7 @@ static irqreturn_t max11801_ts_interrupt(int irq, void *dev_id)
 					input_report_abs(data->input_dev, ABS_X, x);
 					input_report_abs(data->input_dev, ABS_Y, y);
 					input_report_abs(data->input_dev, ABS_PRESSURE, 1);
+					input_event(data->input_dev, EV_KEY, BTN_TOUCH, 1);
 					input_sync(data->input_dev);
 					#endif
 					break;
@@ -275,6 +277,7 @@ static irqreturn_t max11801_ts_interrupt(int irq, void *dev_id)
 					input_report_abs(data->input_dev, ABS_X, px);
 					input_report_abs(data->input_dev, ABS_Y, py);
 					input_report_abs(data->input_dev, ABS_PRESSURE, 0);
+					input_event(data->input_dev, EV_KEY, BTN_TOUCH, 1);
 					input_sync(data->input_dev);
 					sample_count=0;
 					break;
