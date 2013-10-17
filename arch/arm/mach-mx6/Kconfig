@@ -222,6 +222,14 @@ config MACH_MX6Q_MINIMUM_FREQ400
 	  This features set the minimum CPU clock frequency to 400 Mhz instead of 200 Mhz.
 	  Recommended option for the use of video codecs.
 
+config MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT
+	bool "Support i.Core capacitive starterkit"
+       depends on MACH_MX6Q_ICORE
+	help
+	  Include support for Engicam starterkit EDT capacitive LCD
+	  included LVDS board configuration. Please remove the support for
+          capacitive openframe.
+
 config MACH_MX6Q_ICORE_OF_CAP
 	bool "Support i.Core capacitve open frame"
        depends on MACH_MX6Q_ICORE
