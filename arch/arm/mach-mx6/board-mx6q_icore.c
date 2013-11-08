@@ -107,7 +107,7 @@
 #define ICORE_M6_CSI0_RST	IMX_GPIO_NR(1, 8)
 #define ICORE_M6_CSI0_PWN	IMX_GPIO_NR(1, 6)
 #define ICORE_M6_WF111_RESET	IMX_GPIO_NR(1, 2)
-
+#define ICORE_M6_OF_LVDS_RESET	IMX_GPIO_NR(6, 0)
 
 #define MX6_ICORE_BACKLIGHT3 	IMX_GPIO_NR(2, 9)
 
@@ -270,7 +270,11 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	MX6Q_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
 	#endif
 	MX6Q_PAD_CSI0_DAT13__IPU1_CSI0_D_13,
+	#ifdef CONFIG_MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
+	MX6Q_PAD_CSI0_DAT14__GPIO_6_0,
+	#else
 	MX6Q_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
+	#endif
 	MX6Q_PAD_CSI0_DAT15__IPU1_CSI0_D_15,
 	MX6Q_PAD_CSI0_DAT16__IPU1_CSI0_D_16,
 	MX6Q_PAD_CSI0_DAT17__IPU1_CSI0_D_17,
@@ -421,7 +425,11 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
 	#endif
 	MX6DL_PAD_CSI0_DAT13__IPU1_CSI0_D_13,
+	#ifdef CONFIG_MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
+	MX6DL_PAD_CSI0_DAT14__GPIO_6_0,
+	#else
 	MX6DL_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
+	#endif
 	MX6DL_PAD_CSI0_DAT15__IPU1_CSI0_D_15,
 	MX6DL_PAD_CSI0_DAT16__IPU1_CSI0_D_16,
 	MX6DL_PAD_CSI0_DAT17__IPU1_CSI0_D_17,
@@ -1358,7 +1366,6 @@ static struct platform_pwm_backlight_data mx6_icore_pwm0_backlight_data = {
 	.pwm_period_ns = 100000,
 };
 
-
 static struct mxc_dvfs_platform_data icore_dvfscore_data = {
 	.reg_id = "cpu_vddgp",
 	.clk1_id = "cpu_clk",
@@ -1438,8 +1445,12 @@ static void __init mx6_icore_board_init(void)
 	printk("Engicam capacitive starterkit\n");
 #endif
 
+#ifdef CONFIG_MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
+	printk("Engicam resistive touch OpenFrame\n");
+#endif
+
 #ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP
-	printk("Engicam capacitive touch open frame");
+	printk("Engicam capacitive touch OpenFrame");
 	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
 	printk(" based on 7 inch. EDT LCD\n");
 	#else
@@ -1551,7 +1562,6 @@ static void __init mx6_icore_board_init(void)
 	imx6q_add_mxc_pwm_backlight(3, &mx6_icore_pwm_backlight_data);
 #endif
 
-
 	gpio_request(MX6_ICORE_BACKLIGHT3, "backlight-pwm3");
 	gpio_direction_output(MX6_ICORE_BACKLIGHT3, 0);
 
@@ -1599,6 +1609,8 @@ static void __init mx6_icore_board_init(void)
 
 	gpio_set_value(ICORE_M6_WF111_RESET,1);
 
+	
+
 	#ifdef CONFIG_SERIAL_RS485_ENABLE
 	gpio_request(UART3_CS485, "UART3_CS485");
 	gpio_direction_output(UART3_CS485, 0);
@@ -1612,6 +1624,7 @@ static void __init mx6_icore_board_init(void)
 	gpio_set_value(OFC_LVDS_ENABLE, 0);
 	gpio_free(OFC_LVDS_ENABLE);
 	#endif
+
 }
 
 
@@ -1649,6 +1662,33 @@ static void __init mx6q_icore_reserve(void)
 		imx6q_gpu_pdata.reserved_mem_base = phys;
 	}
 }
+
+
+
+/*
+ * Set the LVDS power on control
+ */
+void mx6q_icore_lvds_power(bool bStatus)
+{
+	#ifdef CONFIG_MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
+	mxc_iomux_v3_setup_pad(MX6DL_PAD_CSI0_DAT14__GPIO_6_0);
+	gpio_request(ICORE_M6_OF_LVDS_RESET, "LVDS_OF_RESET");
+	gpio_direction_output(ICORE_M6_OF_LVDS_RESET, 0);
+	if(bStatus)
+	{
+		gpio_set_value(ICORE_M6_OF_LVDS_RESET, 1);
+		mdelay(100);
+	}
+	else
+	{
+		gpio_set_value(ICORE_M6_OF_LVDS_RESET, 0);
+	}
+	gpio_free(ICORE_M6_OF_LVDS_RESET);
+	#endif
+}
+
+
+EXPORT_SYMBOL(mx6q_icore_lvds_power);
 
 /*
  * initialize __mach_desc_MX6Q_SABRELITE data structure.
