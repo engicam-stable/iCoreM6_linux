@@ -1671,7 +1671,10 @@ static void __init mx6q_icore_reserve(void)
 void mx6q_icore_lvds_power(bool bStatus)
 {
 	#ifdef CONFIG_MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
-	mxc_iomux_v3_setup_pad(MX6DL_PAD_CSI0_DAT14__GPIO_6_0);
+	if (cpu_is_mx6q())
+		mxc_iomux_v3_setup_pad(MX6DL_PAD_CSI0_DAT14__GPIO_6_0);
+	else
+		mxc_iomux_v3_setup_pad(MX6Q_PAD_CSI0_DAT14__GPIO_6_0);
 	gpio_request(ICORE_M6_OF_LVDS_RESET, "LVDS_OF_RESET");
 	gpio_direction_output(ICORE_M6_OF_LVDS_RESET, 0);
 	if(bStatus)
@@ -1686,7 +1689,6 @@ void mx6q_icore_lvds_power(bool bStatus)
 	gpio_free(ICORE_M6_OF_LVDS_RESET);
 	#endif
 }
-
 
 EXPORT_SYMBOL(mx6q_icore_lvds_power);
 
