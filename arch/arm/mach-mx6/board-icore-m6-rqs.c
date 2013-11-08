@@ -255,38 +255,39 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	/* CAN1  */
 	MX6DL_PAD_KEY_ROW2__CAN1_RXCAN,
 	MX6DL_PAD_KEY_COL2__CAN1_TXCAN,
-	MX6DL_PAD_GPIO_2__GPIO_1_2,		/* STNDBY */
-	MX6DL_PAD_GPIO_7__GPIO_1_7,		/* NERR */
-	MX6DL_PAD_GPIO_4__GPIO_1_4,		/* Enable */
+
+	MX6DL_PAD_GPIO_4__GPIO_1_4,		/* SD3 nPWR Enable */
 
 	/* CCM  */
 	MX6DL_PAD_GPIO_0__CCM_CLKO,		/* SGTL500 sys_mclk */
-	MX6DL_PAD_GPIO_3__CCM_CLKO2,		/* J5 - Camera MCLK */
+//	MX6DL_PAD_GPIO_3__CCM_CLKO2,		/* J5 - Camera MCLK */
 
 
 	/* ENET */
-	MX6DL_PAD_ENET_CRS_DV__ENET_RX_EN 	,
-	MX6DL_PAD_GPIO_16__ENET_ANATOP_ETHERNET_REF_OUT,
-	MX6DL_PAD_ENET_RX_ER__ENET_RX_ER		,
-	MX6DL_PAD_ENET_TX_EN__ENET_TX_EN		,
-	MX6DL_PAD_ENET_RXD1__ENET_RDATA_1	,
-	MX6DL_PAD_ENET_RXD0__ENET_RDATA_0	,
-	MX6DL_PAD_ENET_TXD1__ENET_TDATA_1	,
-	MX6DL_PAD_ENET_TXD0__ENET_TDATA_0	,
-	MX6DL_PAD_ENET_MDC__ENET_MDC		,
-	MX6DL_PAD_ENET_MDIO__ENET_MDIO		,
-	MX6DL_PAD_ENET_REF_CLK__GPIO_1_23	,	/* TBD da capire se puo' uscire 50MHz, altrimenti GPIO input */
-	MX6DL_PAD_GPIO_17__GPIO_7_12 		,
+	MX6DL_PAD_ENET_MDIO__ENET_MDIO,
+	MX6DL_PAD_ENET_MDC__ENET_MDC,
+	MX6DL_PAD_RGMII_TXC__ENET_RGMII_TXC,
+	MX6DL_PAD_RGMII_TD0__ENET_RGMII_TD0,
+	MX6DL_PAD_RGMII_TD1__ENET_RGMII_TD1,
+	MX6DL_PAD_RGMII_TD2__ENET_RGMII_TD2,
+	MX6DL_PAD_RGMII_TD3__ENET_RGMII_TD3,
+	MX6DL_PAD_RGMII_TX_CTL__ENET_RGMII_TX_CTL,
+	MX6DL_PAD_ENET_REF_CLK__ENET_TX_CLK,
+	MX6DL_PAD_RGMII_RXC__ENET_RGMII_RXC,
+	MX6DL_PAD_RGMII_RD0__ENET_RGMII_RD0,
+	MX6DL_PAD_RGMII_RD1__ENET_RGMII_RD1,
+	MX6DL_PAD_RGMII_RD2__ENET_RGMII_RD2,
+	MX6DL_PAD_RGMII_RD3__ENET_RGMII_RD3,
+	MX6DL_PAD_RGMII_RX_CTL__ENET_RGMII_RX_CTL,
+	MX6DL_PAD_ENET_TX_EN__GPIO_1_28,		/* Micrel RGMII Phy Interrupt */
+	MX6DL_PAD_ENET_RX_ER__GPIO_1_24,		/* RGMII reset */
 
-	/* GPIO7 */
-	MX6DL_PAD_GPIO_17__GPIO_7_12,	/* USB Hub Reset */
-	MX6DL_PAD_GPIO_18__GPIO_7_13,	/* J14 - Volume Up */
 
-	/* I2C1 */
+	/* I2C1*/
 	MX6DL_PAD_EIM_D21__I2C1_SCL,	/* GPIO3[21] */
 	MX6DL_PAD_EIM_D28__I2C1_SDA,	/* GPIO3[28] */
 
-	/* I2C2 Camera, MIPI */
+	/* I2C2 */
 	MX6DL_PAD_KEY_COL3__I2C2_SCL,	/* GPIO4[12] */
 	MX6DL_PAD_KEY_ROW3__I2C2_SDA,	/* GPIO4[13] */
 
@@ -294,41 +295,27 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_GPIO_5__I2C3_SCL,	
 	MX6DL_PAD_EIM_D18__I2C3_SDA,	
  
-	/* DISPLAY */
-	MX6DL_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK,
-	MX6DL_PAD_DI0_PIN15__IPU1_DI0_PIN15,		/* DE */
-	MX6DL_PAD_DI0_PIN2__IPU1_DI0_PIN2,		/* HSync */
-	MX6DL_PAD_DI0_PIN3__IPU1_DI0_PIN3,		/* VSync */
 	MX6DL_PAD_DI0_PIN4__IPU1_DI0_PIN4,		/* Contrast */
-	MX6DL_PAD_DISP0_DAT0__IPU1_DISP0_DAT_0,
-	MX6DL_PAD_DISP0_DAT1__IPU1_DISP0_DAT_1,
-	MX6DL_PAD_DISP0_DAT2__IPU1_DISP0_DAT_2,
-	MX6DL_PAD_DISP0_DAT3__IPU1_DISP0_DAT_3,
-	MX6DL_PAD_DISP0_DAT4__IPU1_DISP0_DAT_4,
-	MX6DL_PAD_DISP0_DAT5__IPU1_DISP0_DAT_5,
-	MX6DL_PAD_DISP0_DAT6__IPU1_DISP0_DAT_6,
-	MX6DL_PAD_DISP0_DAT7__IPU1_DISP0_DAT_7,
-	MX6DL_PAD_DISP0_DAT8__IPU1_DISP0_DAT_8,
-	MX6DL_PAD_DISP0_DAT9__IPU1_DISP0_DAT_9,
-	MX6DL_PAD_DISP0_DAT10__IPU1_DISP0_DAT_10,
-	MX6DL_PAD_DISP0_DAT11__IPU1_DISP0_DAT_11,
-	MX6DL_PAD_DISP0_DAT12__IPU1_DISP0_DAT_12,
-	MX6DL_PAD_DISP0_DAT13__IPU1_DISP0_DAT_13,
-	MX6DL_PAD_DISP0_DAT14__IPU1_DISP0_DAT_14,
-	MX6DL_PAD_DISP0_DAT15__IPU1_DISP0_DAT_15,
-	MX6DL_PAD_DISP0_DAT16__IPU1_DISP0_DAT_16,
-	MX6DL_PAD_DISP0_DAT17__IPU1_DISP0_DAT_17,
-	MX6DL_PAD_DISP0_DAT18__IPU1_DISP0_DAT_18,
-	MX6DL_PAD_DISP0_DAT19__IPU1_DISP0_DAT_19,
+	
+	/* SPI */
+	MX6DL_PAD_DISP0_DAT0__ECSPI3_SCLK,
+	MX6DL_PAD_DISP0_DAT1__ECSPI3_MOSI,
+	MX6DL_PAD_DISP0_DAT2__ECSPI3_MISO,
+	MX6DL_PAD_DISP0_DAT3__ECSPI3_SS0,
+	MX6DL_PAD_DISP0_DAT4__ECSPI3_SS1,
 
+	/* PWMs */
+	MX6DL_PAD_DISP0_DAT8__PWM1_PWMO,
+	MX6DL_PAD_DISP0_DAT9__PWM2_PWMO,
+
+
+	/* AUDIO */
 	MX6DL_PAD_DISP0_DAT20__AUDMUX_AUD4_TXC,
 	MX6DL_PAD_DISP0_DAT21__AUDMUX_AUD4_TXD,
 	MX6DL_PAD_DISP0_DAT22__AUDMUX_AUD4_TXFS,
 	MX6DL_PAD_DISP0_DAT23__AUDMUX_AUD4_RXD,
 
-	MX6DL_PAD_GPIO_7__GPIO_1_7,		/* J7 - Display Connector GP */
-	MX6DL_PAD_GPIO_9__GPIO_1_9,		/* J7 - Display Connector GP */
-	MX6DL_PAD_NANDF_D0__GPIO_2_0,		/* J6 - LVDS Display contrast */
+//	MX6DL_PAD_NANDF_D0__GPIO_2_0,		/* J6 - LVDS Display contrast */
 
 	/* UART1  */
 	MX6DL_PAD_SD3_DAT7__UART1_TXD,
@@ -341,9 +328,6 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	/* UART4*/
 	MX6DL_PAD_KEY_COL0__UART4_TXD,
 	MX6DL_PAD_KEY_ROW0__UART4_RXD,
-
-	/* USBOTG ID pin */
-	MX6DL_PAD_GPIO_1__USBOTG_ID,
 
 
 	/* USB OC pin */
@@ -359,61 +343,42 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_SD1_DAT3__USDHC1_DAT3,
 	MX6DL_PAD_GPIO_1__GPIO_1_1,		/* SD1_CD */
 
-	MX6DL_PAD_EIM_D31__GPIO_3_31,   /* */
 
-	/* ipu1 csi0 */
-	MX6DL_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
-	MX6DL_PAD_CSI0_DAT13__IPU1_CSI0_D_13,
-	MX6DL_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
-	MX6DL_PAD_CSI0_DAT15__IPU1_CSI0_D_15,
-	MX6DL_PAD_CSI0_DAT16__IPU1_CSI0_D_16,
-	MX6DL_PAD_CSI0_DAT17__IPU1_CSI0_D_17,
-	MX6DL_PAD_CSI0_DAT18__IPU1_CSI0_D_18,
-	MX6DL_PAD_CSI0_DAT19__IPU1_CSI0_D_19,
-	MX6DL_PAD_CSI0_VSYNC__IPU1_CSI0_VSYNC,
-	MX6DL_PAD_CSI0_MCLK__IPU1_CSI0_HSYNC,
-	MX6DL_PAD_CSI0_PIXCLK__IPU1_CSI0_PIXCLK,
+	/* USDHC3 */
+	MX6DL_PAD_SD3_CLK__USDHC3_CLK_50MHZ,
+	MX6DL_PAD_SD3_CMD__USDHC3_CMD_50MHZ,
+	MX6DL_PAD_SD3_DAT0__USDHC3_DAT0_50MHZ,
+	MX6DL_PAD_SD3_DAT1__USDHC3_DAT1_50MHZ,
+	MX6DL_PAD_SD3_DAT2__USDHC3_DAT2_50MHZ,
+	MX6DL_PAD_SD3_DAT3__USDHC3_DAT3_50MHZ,
+	MX6DL_PAD_GPIO_1__GPIO_1_1,		/* SD3_CD */
+//	NEW_PAD_CTRL(MX6DL_PAD_SD3_DAT4__GPIO_7_1, MX6DL_SABRELITE_SD3_WP_PADCFG),
 
-};
-#ifdef REMOVED
-/* The GPMI is conflicted with SD3, so init this in the driver. */
-static iomux_v3_cfg_t mx6q_gpmi_nand[] __initdata = {
-	MX6Q_PAD_NANDF_CLE__RAWNAND_CLE,
-	MX6Q_PAD_NANDF_ALE__RAWNAND_ALE,
-	MX6Q_PAD_NANDF_CS0__RAWNAND_CE0N,
-	MX6Q_PAD_NANDF_RB0__RAWNAND_READY0,
-	MX6Q_PAD_NANDF_D0__RAWNAND_D0,
-	MX6Q_PAD_NANDF_D1__RAWNAND_D1,
-	MX6Q_PAD_NANDF_D2__RAWNAND_D2,
-	MX6Q_PAD_NANDF_D3__RAWNAND_D3,
-	MX6Q_PAD_NANDF_D4__RAWNAND_D4,
-	MX6Q_PAD_NANDF_D5__RAWNAND_D5,
-	MX6Q_PAD_NANDF_D6__RAWNAND_D6,
-	MX6Q_PAD_NANDF_D7__RAWNAND_D7,
-	MX6Q_PAD_SD4_CMD__RAWNAND_RDN,
-	MX6Q_PAD_SD4_CLK__RAWNAND_WRN,
-	MX6Q_PAD_NANDF_WP_B__RAWNAND_RESETN,
-};
+	/* USDHC4 */
+	MX6DL_PAD_SD4_CLK__USDHC4_CLK_50MHZ,
+	MX6DL_PAD_SD4_CMD__USDHC4_CMD_50MHZ,
+	MX6DL_PAD_SD4_DAT0__USDHC4_DAT0_50MHZ,
+	MX6DL_PAD_SD4_DAT1__USDHC4_DAT1_50MHZ,
+	MX6DL_PAD_SD4_DAT2__USDHC4_DAT2_50MHZ,
+	MX6DL_PAD_SD4_DAT3__USDHC4_DAT3_50MHZ,
+	MX6DL_PAD_SD4_DAT4__USDHC4_DAT4_50MHZ,
+	MX6DL_PAD_SD4_DAT5__USDHC4_DAT5_50MHZ,
+	MX6DL_PAD_SD4_DAT6__USDHC4_DAT6_50MHZ,
+	MX6DL_PAD_SD4_DAT7__USDHC4_DAT7_50MHZ,
+//	MX6DL_PAD_NANDF_D6__GPIO_2_6,		/* J20 - SD4_CD */
+//	MX6DL_PAD_NANDF_D7__GPIO_2_7,		/* SD4_WP */
 
-/* The GPMI is conflicted with SD3, so init this in the driver. */
-static iomux_v3_cfg_t mx6dl_gpmi_nand[] __initdata = {
-	MX6DL_PAD_NANDF_CLE__RAWNAND_CLE,
-	MX6DL_PAD_NANDF_ALE__RAWNAND_ALE,
-	MX6DL_PAD_NANDF_CS0__RAWNAND_CE0N,
-	MX6DL_PAD_NANDF_RB0__RAWNAND_READY0,
-	MX6DL_PAD_NANDF_D0__RAWNAND_D0,
-	MX6DL_PAD_NANDF_D1__RAWNAND_D1,
-	MX6DL_PAD_NANDF_D2__RAWNAND_D2,
-	MX6DL_PAD_NANDF_D3__RAWNAND_D3,
-	MX6DL_PAD_NANDF_D4__RAWNAND_D4,
-	MX6DL_PAD_NANDF_D5__RAWNAND_D5,
-	MX6DL_PAD_NANDF_D6__RAWNAND_D6,
-	MX6DL_PAD_NANDF_D7__RAWNAND_D7,
-	MX6DL_PAD_SD4_CMD__RAWNAND_RDN,
-	MX6DL_PAD_SD4_CLK__RAWNAND_WRN,
-	MX6DL_PAD_NANDF_WP_B__RAWNAND_RESETN,
-};
+
+
+
+
+#ifdef CONFIG_MX6_ENET_IRQ_TO_GPIO
+	MX6DL_PAD_GPIO_6__OBSERVE_MUX_OBSRV_INT_OUT1,
+#else
 #endif
+
+};
+
 #if 1
 
 #define MX6Q_USDHC_PAD_SETTING(id, speed)	\
@@ -584,50 +549,7 @@ static const struct esdhc_platform_data mx6q_icore_sd4_data __initconst = {
 	.platform_pad_change = plt_sd4_pad_change,
 };
 
-#if 0
-static int __init gpmi_nand_platform_init(void)
-{
-	iomux_v3_cfg_t *nand_pads = NULL;
-	u32 nand_pads_cnt;
 
-	if (cpu_is_mx6q()) {
-		nand_pads = mx6q_gpmi_nand;
-		nand_pads_cnt = ARRAY_SIZE(mx6q_gpmi_nand);
-	} else {
-		nand_pads = mx6dl_gpmi_nand;
-		nand_pads_cnt = ARRAY_SIZE(mx6dl_gpmi_nand);
-	}
-	BUG_ON(!nand_pads);
-	return mxc_iomux_v3_setup_multiple_pads(nand_pads, nand_pads_cnt);
-}
-
-static struct mtd_partition imx6_icore_nand_partitions[] = {
-	{
-	 .name = "bootloader",
-	 .offset = 0,
-	 .size = 0x00200000,
-	},
-	{
-	 .name = "kernel",
-	 .offset = MTDPART_OFS_APPEND,
-	 .size = 0x00700000,
-	},
-	{
-	 .name = "rootfs",
-	 .offset = MTDPART_OFS_APPEND,
-	 .size = MTDPART_SIZ_FULL,
-	},
-};
-static const struct gpmi_nand_platform_data
-mx6q_gpmi_nand_platform_data __initconst = {
-	.platform_init           = gpmi_nand_platform_init,
-	.min_prop_delay_in_ns    = 5,
-	.max_prop_delay_in_ns    = 9,
-	.max_chip_count          = 1,
-	.partitions = imx6_icore_nand_partitions,
-	.partition_count = ARRAY_SIZE(imx6_icore_nand_partitions),
-};
-#endif
 static const struct anatop_thermal_platform_data
 	mx6q_icore_anatop_thermal_data __initconst = {
 		.name = "anatop_thermal",
@@ -643,49 +565,63 @@ static inline void mx6q_icore_init_uart(void)
 
 static int mx6q_icore_fec_phy_init(struct phy_device *phydev)
 {
-#if 0
-	/* prefer master mode, disable 1000 Base-T capable */
-	phy_write(phydev, 0x9, 0x1c00);
 
-	/* min rx data delay */
-	phy_write(phydev, 0x0b, 0x8105);
-	phy_write(phydev, 0x0c, 0x0000);
-
-	/* max rx/tx clock delay, min rx/tx control delay */
-	phy_write(phydev, 0x0b, 0x8104);
-	phy_write(phydev, 0x0c, 0xf0f0);
-	phy_write(phydev, 0x0b, 0x104);
-#else
+    if (cpu_is_mx6q())
+    {
        //write register 6 addr 2 TXD[0:3] skew
 	phy_write(phydev, 0x0d, 0x0002);
 	phy_write(phydev, 0x0e, 0x0006);
 	phy_write(phydev, 0x0d, 0x4002);
 	phy_write(phydev, 0x0e, 0x3333);
-#if 1
+
        //write register 5 addr 2 RXD[0:3] skew
 	phy_write(phydev, 0x0d, 0x0002);
 	phy_write(phydev, 0x0e, 0x0005);
 	phy_write(phydev, 0x0d, 0x4002);
-//	phy_write(phydev, 0x0e, 0x3333);
-	phy_write(phydev, 0x0e, 0xFFFF);
-#endif
+	phy_write(phydev, 0x0e, 0x7777);
+
        //write register 4 addr 2 RX_DV TX_EN skew
 	phy_write(phydev, 0x0d, 0x0002);
 	phy_write(phydev, 0x0e, 0x0004);
 	phy_write(phydev, 0x0d, 0x4002);
-//	phy_write(phydev, 0x0e, 0x0037);
 	phy_write(phydev, 0x0e, 0x0037);
 
-#endif
 
-#if 1
+
        //write register 8 addr 2 RX_CLK GTX_CLK skew
 	phy_write(phydev, 0x0d, 0x0002);
 	phy_write(phydev, 0x0e, 0x0008);
 	phy_write(phydev, 0x0d, 0x4002);
-//	phy_write(phydev, 0x0e, 0x01E7);
 	phy_write(phydev, 0x0e, 0x01E7);
-#endif
+     }
+     else
+     {
+       //write register 6 addr 2 TXD[0:3] skew
+	phy_write(phydev, 0x0d, 0x0002);
+	phy_write(phydev, 0x0e, 0x0006);
+	phy_write(phydev, 0x0d, 0x4002);
+	phy_write(phydev, 0x0e, 0x1111);
+
+       //write register 5 addr 2 RXD[0:3] skew
+	phy_write(phydev, 0x0d, 0x0002);
+	phy_write(phydev, 0x0e, 0x0005);
+	phy_write(phydev, 0x0d, 0x4002);
+	phy_write(phydev, 0x0e, 0x2222);
+
+       //write register 4 addr 2 RX_DV TX_EN skew
+	phy_write(phydev, 0x0d, 0x0002);
+	phy_write(phydev, 0x0e, 0x0004);
+	phy_write(phydev, 0x0d, 0x4002);
+	phy_write(phydev, 0x0e, 0x0037);
+
+
+
+       //write register 8 addr 2 RX_CLK GTX_CLK skew
+	phy_write(phydev, 0x0d, 0x0002);
+	phy_write(phydev, 0x0e, 0x0008);
+	phy_write(phydev, 0x0d, 0x4002);
+	phy_write(phydev, 0x0e, 0x01E7);
+     }
 	return 0;
 }
 
@@ -705,48 +641,8 @@ static const struct spi_imx_master mx6q_icore_spi_data __initconst = {
 	.chipselect     = mx6q_icore_spi_cs,
 	.num_chipselect = ARRAY_SIZE(mx6q_icore_spi_cs),
 };
-#if 0
-#if defined(CONFIG_MTD_M25P80) || defined(CONFIG_MTD_M25P80_MODULE)
-static struct mtd_partition imx6_icore_spi_nor_partitions[] = {
-	{
-	 .name = "bootloader",
-	 .offset = 0,
-	 .size = 0x00040000,
-	},
-	{
-	 .name = "kernel",
-	 .offset = MTDPART_OFS_APPEND,
-	 .size = MTDPART_SIZ_FULL,
-	},
-};
 
-static struct flash_platform_data imx6_icore__spi_flash_data = {
-	.name = "m25p80",
-	.parts = imx6_icore_spi_nor_partitions,
-	.nr_parts = ARRAY_SIZE(imx6_icore_spi_nor_partitions),
-	.type = "sst25vf016b",
-};
-#endif
 
-static struct spi_board_info imx6_icore_spi_nor_device[] __initdata = {
-#if defined(CONFIG_MTD_M25P80)
-	{
-		.modalias = "m25p80",
-		.max_speed_hz = 20000000, /* max spi clock (SCK) speed in HZ */
-		.bus_num = 0,
-		.chip_select = 0,
-		.platform_data = &imx6_icore__spi_flash_data,
-	},
-#endif
-};
-#endif
-#if 0
-static void spi_device_init(void)
-{
-	spi_register_board_info(imx6_icore_spi_nor_device,
-				ARRAY_SIZE(imx6_icore_spi_nor_device));
-}
-#endif
 static struct mxc_audio_platform_data mx6_icore_audio_data;
 
 static int mx6_icore_sgtl5000_init(void)
