@@ -1361,20 +1361,20 @@ static int mxcfb_blank(int blank, struct fb_info *info)
 	case FB_BLANK_POWERDOWN:
 	case FB_BLANK_VSYNC_SUSPEND:
 	case FB_BLANK_HSYNC_SUSPEND:
-	case FB_BLANK_NORMAL:		
+	case FB_BLANK_NORMAL:
+		mx6q_icore_lvds_power(false);	
 		if (mxc_fbi->dispdrv && mxc_fbi->dispdrv->drv->disable)
 			mxc_fbi->dispdrv->drv->disable(mxc_fbi->dispdrv);
 		ipu_disable_channel(mxc_fbi->ipu, mxc_fbi->ipu_ch, true);
 		if (mxc_fbi->ipu_di >= 0)
 			ipu_uninit_sync_panel(mxc_fbi->ipu, mxc_fbi->ipu_di);
-		ipu_uninit_channel(mxc_fbi->ipu, mxc_fbi->ipu_ch);
-		mx6q_icore_lvds_power(false);
+		ipu_uninit_channel(mxc_fbi->ipu, mxc_fbi->ipu_ch);		
 		break;
 	case FB_BLANK_UNBLANK:
-		mx6q_icore_lvds_power(true);
 		info->var.activate = (info->var.activate & ~FB_ACTIVATE_MASK) |
 				FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
 		ret = mxcfb_set_par(info);
+		mx6q_icore_lvds_power(true);
 		break;
 	}
 	if (!ret)
