@@ -945,24 +945,20 @@ static struct i2c_board_info mxc_i2c1_board_info[] __initdata = {
 };
 
 static struct i2c_board_info mxc_i2c2_board_info[] __initdata = {
+	#if (defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7 || defined CONFIG_MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT)
 	{
 		I2C_BOARD_INFO("edt-ft5x06", 0x38),
-		#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP
-			#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
-			.irq  = gpio_to_irq(OFC_FT5X06_TS_IRQ),
-			#else
-			/* If the openframe is an Ampire LCd the irq is used by ili210x */
-			#endif
-		#else
-			#ifdef CONFIG_MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT
-			.irq  = gpio_to_irq(STARTERKIT_CAPEDT_IRQ),
-			#else
-			.irq  = gpio_to_irq(FT5X06_TS_IRQ),
-			#endif
+		#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
+		.irq  = gpio_to_irq(OFC_FT5X06_TS_IRQ),
+		#endif
+
+		#ifdef CONFIG_MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT
+		.irq  = gpio_to_irq(STARTERKIT_CAPEDT_IRQ),
 		#endif
 
 		.platform_data = (void *) & mx6_icore_ft5x06_data,
-	},		
+	},
+	#endif		
 	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE
 	{
 		I2C_BOARD_INFO("ili210x", 0x41),
