@@ -818,6 +818,14 @@ static void adv7180_hard_reset(bool cvbs)
 	}
 
 	/* Datasheet recommends */
+#ifdef CONFIG_MACH_MX6Q_ICORE
+	// setup decoder to output VSYNC
+	adv7180_write_reg(0x58, 0x01);
+
+	// ITU-R BT.656
+	adv7180_write_reg(0x04, 0x45);
+	adv7180_write_reg(0xF4, 0x3F);
+#else
 	adv7180_write_reg(0x01, 0xc8);
 	adv7180_write_reg(0x02, 0x04);
 	adv7180_write_reg(0x03, 0x00);
@@ -1056,6 +1064,7 @@ static void adv7180_hard_reset(bool cvbs)
 	adv7180_write_reg(0xF9, 0x03);
 	adv7180_write_reg(0xFA, 0xFA);
 	adv7180_write_reg(0xFB, 0x40);
+#endif
 }
 
 /*! ADV7180 I2C attach function.
