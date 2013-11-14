@@ -1675,8 +1675,8 @@ void mx6q_icore_lvds_power(bool bStatus)
 	gpio_direction_output(ICORE_M6_OF_LVDS_RESET, 0);
 	if(bStatus)
 	{
-		gpio_set_value(ICORE_M6_OF_LVDS_RESET, 1);
 		mdelay(100);
+		gpio_set_value(ICORE_M6_OF_LVDS_RESET, 1);	
 	}
 	else
 	{

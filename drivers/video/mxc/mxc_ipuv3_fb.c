@@ -2249,6 +2249,8 @@ static int mxcfb_probe(struct platform_device *pdev)
 	struct resource *res;
 	int ret = 0;
 
+	mx6q_icore_lvds_power(false);
+
 	/* Initialize FB structures */
 	fbi = mxcfb_init_fbinfo(&pdev->dev, &mxcfb_ops);
 	if (!fbi) {
@@ -2257,6 +2259,9 @@ static int mxcfb_probe(struct platform_device *pdev)
 	}
 
 	ret = mxcfb_option_setup(pdev, fbi);
+
+	mx6q_icore_lvds_power(true);
+
 	if (ret)
 		goto get_fb_option_failed;
 
