@@ -920,10 +920,11 @@ static struct i2c_board_info mxc_i2c0_board_info[] __initdata = {
 	},
 };
 
-
+#if (defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7 || defined CONFIG_MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT)
 static struct edt_ft5x06_platform_data mx6_icore_ft5x06_data = {
 	.reset_pin      = -1,   /* static high */
 };
+#endif
 
 #ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE
 bool ili210x_get_pendown_state (void)
@@ -1358,7 +1359,7 @@ static int imx6q_init_audio(void)
 static struct platform_pwm_backlight_data mx6_icore_pwm0_backlight_data = {
 	.pwm_id = 2,
 	.max_brightness = 255,
-	.dft_brightness = 200,
+	.dft_brightness = 255,
 	.pwm_period_ns = 100000,
 };
 
@@ -1667,15 +1668,24 @@ static void __init mx6q_icore_reserve(void)
 void mx6q_icore_lvds_power(bool bStatus)
 {
 	#ifdef CONFIG_MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
+	static bool bFirstTime=true;
+	static bool bPreviusStatus=false;
+
+	// If there is no change with the previus status the fuction end
+	if(bPreviusStatus==bStatus && bFirstTime==false)
+ 		return;
+	bFirstTime=false;
+	bPreviusStatus=bStatus;
+
 	if (cpu_is_mx6q())
-		mxc_iomux_v3_setup_pad(MX6DL_PAD_CSI0_DAT14__GPIO_6_0);
-	else
 		mxc_iomux_v3_setup_pad(MX6Q_PAD_CSI0_DAT14__GPIO_6_0);
+	else
+		mxc_iomux_v3_setup_pad(MX6DL_PAD_CSI0_DAT14__GPIO_6_0);
 	gpio_request(ICORE_M6_OF_LVDS_RESET, "LVDS_OF_RESET");
 	gpio_direction_output(ICORE_M6_OF_LVDS_RESET, 0);
 	if(bStatus)
 	{
-		mdelay(100);
+		mdelay(30);
 		gpio_set_value(ICORE_M6_OF_LVDS_RESET, 1);	
 	}
 	else
