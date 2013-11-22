@@ -96,6 +96,13 @@ config FRAMEBUFFER_CONSOLE
 	help
 	  Low-level framebuffer-based console driver.
 
+config FRAMEBUFFER_CONSOLE_BLINKING
+       bool "Framebuffer Console blinking"
+       depends on FRAMEBUFFER_CONSOLE
+       help
+         Enable the cursor framebuffer consolle blinking on kernel startup.
+	 Enable this option for blinking cursor on spash screen kernel image
+
 config FRAMEBUFFER_CONSOLE_DETECT_PRIMARY
        bool "Map the console to the primary display device"
        depends on FRAMEBUFFER_CONSOLE

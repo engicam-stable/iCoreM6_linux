@@ -393,6 +393,7 @@ static void fb_flashcursor(struct work_struct *work)
 	console_unlock();
 }
 
+#ifdef CONFIG_FRAMEBUFFER_CONSOLE_BLINKING
 static void cursor_timer_handler(unsigned long dev_addr)
 {
 	struct fb_info *info = (struct fb_info *) dev_addr;
@@ -401,9 +402,11 @@ static void cursor_timer_handler(unsigned long dev_addr)
 	schedule_work(&info->queue);
 	mod_timer(&ops->cursor_timer, jiffies + HZ/5);
 }
+#endif
 
 static void fbcon_add_cursor_timer(struct fb_info *info)
 {
+#ifdef CONFIG_FRAMEBUFFER_CONSOLE_BLINKING
 	struct fbcon_ops *ops = info->fbcon_par;
 
 	if ((!info->queue.func || info->queue.func == fb_flashcursor) &&
@@ -419,6 +422,7 @@ static void fbcon_add_cursor_timer(struct fb_info *info)
 		add_timer(&ops->cursor_timer);
 		ops->flags |= FBCON_FLAGS_CURSOR_TIMER;
 	}
+#endif
 }
 
 static void fbcon_del_cursor_timer(struct fb_info *info)
