@@ -223,28 +223,28 @@ config MACH_MX6Q_MINIMUM_FREQ400
 	  Recommended option for the use of video codecs.
 
 config MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
-	bool "Support i.CoreM6 resistive OpenFrame"
+	bool "Support i.Core resistive OpenFrame"
        depends on MACH_MX6Q_ICORE
 	help
 	  Include the support for Engicam openframe. This features enabled
 	  the correct power up and power down of the on-board LVDS controller.
           This features is mandatory.
 
-config MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT
-	bool "Support i.Core capacitive starterkit"
-       depends on MACH_MX6Q_ICORE
-	help
-	  Include support for Engicam starterkit EDT capacitive LCD
-	  included LVDS board configuration. Please remove the support for
-          capacitive openframe.
-
 config MACH_MX6Q_ICORE_OF_CAP
-	bool "Support i.Core capacitve open frame"
+	bool "Support i.Core capacitive OpenFrame"
        depends on MACH_MX6Q_ICORE
 	help
 	  Include support for Engicam cap open frame. This includes specific
 	  configurations for the board and its peripherals; included LVDS 
 	  board configuration.
+
+config MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT
+	bool "Support i.Core capacitive Starterkit"
+       depends on MACH_MX6Q_ICORE
+	help
+	  Include support for Engicam starterkit EDT capacitive LCD
+	  included LVDS board configuration. Please remove the support for
+          capacitive openframe.
 
 config MACH_MX6Q_ICORE_OF_CAP_EDT_7
 	bool "Support i.Core capacitive open frame Edt LCD"

@@ -132,7 +132,22 @@ enum {
 	BOTH_OFF
 };
 
+#ifdef CONFIG_MACH_MX6Q_ICORE
 extern void mx6q_icore_lvds_power(bool bStatus);
+#endif
+
+/* Abstraction layer for LVDS enable control */
+static void mxcfb_lvds_power(bool bStatus)
+{
+	#ifdef CONFIG_MACH_MX6Q_ICORE
+	mx6q_icore_lvds_power(bStatus);
+	#endif
+
+	#ifdef CONFIG_MACH_ICORE_M6_RQS
+	// TBD
+	#endif
+}
+
 static bool g_dp_in_use[2];
 LIST_HEAD(fb_alloc_list);
 
@@ -1363,7 +1378,7 @@ static int mxcfb_blank(int blank, struct fb_info *info)
 	case FB_BLANK_HSYNC_SUSPEND:
 	case FB_BLANK_NORMAL:
 		if(info->node==0)
-			mx6q_icore_lvds_power(false);	
+			mxcfb_lvds_power(false);	
 		if (mxc_fbi->dispdrv && mxc_fbi->dispdrv->drv->disable)
 			mxc_fbi->dispdrv->drv->disable(mxc_fbi->dispdrv);
 		ipu_disable_channel(mxc_fbi->ipu, mxc_fbi->ipu_ch, true);
@@ -1376,7 +1391,7 @@ static int mxcfb_blank(int blank, struct fb_info *info)
 				FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
 		ret = mxcfb_set_par(info);
 		if(info->node==0)
-			mx6q_icore_lvds_power(true);
+			mxcfb_lvds_power(true);
 		break;
 	}
 	if (!ret)
@@ -2251,7 +2266,7 @@ static int mxcfb_probe(struct platform_device *pdev)
 	struct resource *res;
 	int ret = 0;
 
-	mx6q_icore_lvds_power(false);
+	mxcfb_lvds_power(false);
 
 	/* Initialize FB structures */
 	fbi = mxcfb_init_fbinfo(&pdev->dev, &mxcfb_ops);
@@ -2262,7 +2277,7 @@ static int mxcfb_probe(struct platform_device *pdev)
 
 	ret = mxcfb_option_setup(pdev, fbi);
 
-	mx6q_icore_lvds_power(true);
+	mxcfb_lvds_power(true);
 
 	if (ret)
 		goto get_fb_option_failed;
