@@ -460,6 +460,8 @@ static int mxcfb_set_par(struct fb_info *fbi)
 	struct mxcfb_info *mxc_fbi_fg = NULL;
 	bool ovfbi_enable = false;
 
+	mxcfb_lvds_power(false);
+
 	if (mxc_fbi->ovfbi)
 		mxc_fbi_fg = (struct mxcfb_info *)mxc_fbi->ovfbi->par;
 
@@ -672,6 +674,8 @@ static int mxcfb_set_par(struct fb_info *fbi)
 	}
 
 	mxc_fbi->cur_var = fbi->var;
+
+	mxcfb_lvds_power(true);
 
 	return retval;
 }
