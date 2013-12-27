@@ -115,6 +115,62 @@
 		PAD_CTL_PUS_22K_UP | PAD_CTL_SPEED_MED |	\
 		PAD_CTL_DSE_40ohm | PAD_CTL_HYS)
 
+enum engicam_board
+{
+        ENGICAM_RESISTIVE_SK=0,
+        ENGICAM_RESISTIVE_OF,
+        ENGICAM_CAPACITIVE_OF,
+	ENGICAM_CAPACITIVE_OF_AMP,
+        ENGICAM_CAPACITIVE_SK,
+
+        ENGICAM_LAST_BOARD
+};
+
+static char* engi_board_str[] =
+{
+        "SK.RES",
+        "OF.RES",
+        "OF.CAP",
+	"OF.AMP",
+        "SK.CAP",
+
+        /* add here a new board */
+};
+
+static char* engi_board_description_str[] =
+{
+        "Engicam resistive Starterkit",
+        "Engicam resistive Openframe",
+        "Engicam capacitive Openframe EDT",
+	"Engicam capacitive Openframe Ampire",
+        "Engicam capacitive Starterkit",
+
+        /* add here a new description board */
+};
+
+static unsigned int engi_board = ENGICAM_RESISTIVE_SK;
+
+/*
+ * Detect from the bootargs witch engicam custom board is if setted
+ */
+static int engi_board_setup(char *str)
+{
+        engi_board = 0;
+
+        while( engi_board<ENGICAM_LAST_BOARD && strcmp(str, engi_board_str[engi_board] ) )
+        {
+                engi_board++;
+        }
+
+        // If not match RESISTIVE_SK will be the default value
+        if(engi_board>=ENGICAM_LAST_BOARD)
+                engi_board=ENGICAM_RESISTIVE_SK;
+
+        return 0;
+}
+
+__setup("engi_board=", engi_board_setup);
+
 void __init early_console_setup(unsigned long base, struct clk *clk);
 static struct clk *sata_clk;
 
@@ -262,19 +318,8 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 
 	MX6Q_PAD_GPIO_2__GPIO_1_2,		/* RESET WF111 */
 
-
 	/* ipu1 csi0 */
-	#if (defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7 || defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE)
-	MX6Q_PAD_CSI0_DAT12__GPIO_5_30,
-	#else
-	MX6Q_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
-	#endif
 	MX6Q_PAD_CSI0_DAT13__IPU1_CSI0_D_13,
-	#ifdef CONFIG_MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
-	MX6Q_PAD_CSI0_DAT14__GPIO_6_0,
-	#else
-	MX6Q_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
-	#endif
 	MX6Q_PAD_CSI0_DAT15__IPU1_CSI0_D_15,
 	MX6Q_PAD_CSI0_DAT16__IPU1_CSI0_D_16,
 	MX6Q_PAD_CSI0_DAT17__IPU1_CSI0_D_17,
@@ -283,8 +328,33 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	MX6Q_PAD_CSI0_VSYNC__IPU1_CSI0_VSYNC,
 	MX6Q_PAD_CSI0_MCLK__IPU1_CSI0_HSYNC,
 	MX6Q_PAD_CSI0_PIXCLK__IPU1_CSI0_PIXCLK,
+};
 
+/* Engicam board pin initialization for mx6q*/
 
+static iomux_v3_cfg_t mx6q_icore_pads_resistive_sk[] = {
+	MX6Q_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
+	MX6Q_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
+};
+
+static iomux_v3_cfg_t mx6q_icore_pads_resistive_of[] = {
+	MX6Q_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
+	MX6Q_PAD_CSI0_DAT14__GPIO_6_0,
+};
+
+static iomux_v3_cfg_t mx6q_icore_pads_capacitive_of[] = {
+	MX6Q_PAD_CSI0_DAT12__GPIO_5_30,
+	MX6Q_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
+};
+
+static iomux_v3_cfg_t mx6q_icore_pads_capacitive_ofamp[] = {
+	MX6Q_PAD_CSI0_DAT12__GPIO_5_30,
+	MX6Q_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
+};
+
+static iomux_v3_cfg_t mx6q_icore_pads_capacitive_sk[] = {
+	MX6Q_PAD_CSI0_DAT12__GPIO_5_30,
+	MX6Q_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
 };
 
 static iomux_v3_cfg_t mx6dl_icore_pads[] = {
@@ -419,17 +489,7 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_GPIO_2__GPIO_1_2, /* reset WF111  */
 
 	/* ipu1 csi0 */
-	#if (defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7 || defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE)
-	MX6DL_PAD_CSI0_DAT12__GPIO_5_30,
-	#else
-	MX6DL_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
-	#endif
 	MX6DL_PAD_CSI0_DAT13__IPU1_CSI0_D_13,
-	#ifdef CONFIG_MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
-	MX6DL_PAD_CSI0_DAT14__GPIO_6_0,
-	#else
-	MX6DL_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
-	#endif
 	MX6DL_PAD_CSI0_DAT15__IPU1_CSI0_D_15,
 	MX6DL_PAD_CSI0_DAT16__IPU1_CSI0_D_16,
 	MX6DL_PAD_CSI0_DAT17__IPU1_CSI0_D_17,
@@ -438,6 +498,33 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_CSI0_VSYNC__IPU1_CSI0_VSYNC,
 	MX6DL_PAD_CSI0_MCLK__IPU1_CSI0_HSYNC,
 	MX6DL_PAD_CSI0_PIXCLK__IPU1_CSI0_PIXCLK,
+};
+
+/* Engicam board pin initialization for mx6dl */
+
+static iomux_v3_cfg_t mx6dl_icore_pads_resistive_sk[] = {
+	MX6DL_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
+	MX6DL_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
+};
+
+static iomux_v3_cfg_t mx6dl_icore_pads_resistive_of[] = {
+	MX6DL_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
+	MX6DL_PAD_CSI0_DAT14__GPIO_6_0,
+};
+
+static iomux_v3_cfg_t mx6dl_icore_pads_capacitive_of[] = {
+	MX6DL_PAD_CSI0_DAT12__GPIO_5_30,
+	MX6DL_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
+};
+
+static iomux_v3_cfg_t mx6dl_icore_pads_capacitive_ofamp[] = {
+	MX6DL_PAD_CSI0_DAT12__GPIO_5_30,
+	MX6DL_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
+};
+
+static iomux_v3_cfg_t mx6dl_icore_pads_capacitive_sk[] = {
+	MX6DL_PAD_CSI0_DAT12__GPIO_5_30,
+	MX6DL_PAD_CSI0_DAT14__IPU1_CSI0_D_14,
 };
 
 /* The GPMI is conflicted with SD3, so init this in the driver. */
@@ -891,7 +978,6 @@ static struct platform_device mx6_icore_audio_device = {
 	.name = "imx-sgtl5000",
 };
 
-#ifndef	CONFIG_MACH_MX6Q_ICORE_OF_CAP
 static void adv7180_pwdn(int pwdn)
 {
 }
@@ -905,7 +991,6 @@ static struct fsl_mxc_tvin_platform_data adv7180_data = {
 	.reset		= NULL,
 	.cvbs		= true,
 };
-#endif
 
 static struct imxi2c_platform_data mx6q_icore_i2c_data = {
 	.bitrate = 100000,
@@ -920,13 +1005,10 @@ static struct i2c_board_info mxc_i2c0_board_info[] __initdata = {
 	},
 };
 
-#if (defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7 || defined CONFIG_MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT)
 static struct edt_ft5x06_platform_data mx6_icore_ft5x06_data = {
 	.reset_pin      = -1,   /* static high */
 };
-#endif
 
-#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE
 bool ili210x_get_pendown_state (void)
 {
 	return !gpio_get_value(OFC_FT5X06_TS_IRQ);
@@ -937,7 +1019,6 @@ static struct ili210x_platform_data mx6_icore_ili210x_data = {
         .poll_period		= 20,       
         .get_pendown_state	= ili210x_get_pendown_state,
 };                                      
-#endif
 
 static struct i2c_board_info mxc_i2c1_board_info[] __initdata = {
 	{
@@ -946,43 +1027,58 @@ static struct i2c_board_info mxc_i2c1_board_info[] __initdata = {
 };
 
 static struct i2c_board_info mxc_i2c2_board_info[] __initdata = {
-	#if (defined CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7 || defined CONFIG_MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT)
+	{
+		I2C_BOARD_INFO("sgtl5000", 0x0a),
+	},
+};
+
+static struct i2c_board_info mxc_i2c2_board_info_skres[] __initdata = {
+	{
+		I2C_BOARD_INFO("adv7180", 0x21),
+		.platform_data = (void *)&adv7180_data,
+	},
+};
+
+static struct i2c_board_info mxc_i2c2_board_info_ofres[] __initdata = {
+	{
+		I2C_BOARD_INFO("pcf8563", 0x51),
+	},
+};
+
+static struct i2c_board_info mxc_i2c2_board_info_ofcap[] __initdata = {
 	{
 		I2C_BOARD_INFO("edt-ft5x06", 0x38),
-		#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
 		.irq  = gpio_to_irq(OFC_FT5X06_TS_IRQ),
-		#endif
-
-		#ifdef CONFIG_MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT
-		.irq  = gpio_to_irq(STARTERKIT_CAPEDT_IRQ),
-		#endif
-
 		.platform_data = (void *) & mx6_icore_ft5x06_data,
 	},
-	#endif		
-	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE
+	{
+		I2C_BOARD_INFO("pcf8563", 0x51),
+	},
+};
+
+static struct i2c_board_info mxc_i2c2_board_info_ofamp[] __initdata = {
 	{
 		I2C_BOARD_INFO("ili210x", 0x41),
 		.platform_data = (void *) & mx6_icore_ili210x_data,
 		.irq  = gpio_to_irq(OFC_FT5X06_TS_IRQ),
 	},
-	#endif
-	{
-		I2C_BOARD_INFO("sgtl5000", 0x0a),
-	},
-	#ifdef	CONFIG_MACH_MX6Q_ICORE_OF_CAP
 	{
 		I2C_BOARD_INFO("pcf8563", 0x51),
 	},
-	#else
+};
+
+static struct i2c_board_info mxc_i2c2_board_info_skcap[] __initdata = {
 	{
 		I2C_BOARD_INFO("adv7180", 0x21),
 		.platform_data = (void *)&adv7180_data,
 	},
-	#endif
-
+	{
+		I2C_BOARD_INFO("edt-ft5x06", 0x38),
+		.irq  = gpio_to_irq(STARTERKIT_CAPEDT_IRQ),
+		.platform_data = (void *) & mx6_icore_ft5x06_data,
+	},
 };
-#if 1
+
 static void imx6q_icore_usbotg_vbus(bool on)
 {
 #if 0
@@ -992,7 +1088,6 @@ static void imx6q_icore_usbotg_vbus(bool on)
 		gpio_set_value(ICORE_M6_USB_OTG_PWR, 0);
 #endif
 }
-#endif
 
 static void __init imx6q_icore_init_usb(void)
 {
@@ -1263,6 +1358,7 @@ static struct platform_device icore_vmmc_reg_devices = {
 	},
 };
 
+
 #ifdef CONFIG_SND_SOC_SGTL5000
 
 static struct regulator_consumer_supply sgtl5000_icore_consumer_vdda = {
@@ -1406,9 +1502,88 @@ static inline void __init mx6q_csi0_io_init(void)
 		mxc_iomux_set_gpr_register(13, 0, 3, 4);
 }
 
-/*!
- * Board specific initialization.
- */
+static void icore_customized_board_init (void)
+{
+	printk("%s selected.", engi_board_description_str[engi_board] );	
+	
+	if (cpu_is_mx6q())
+	{
+		switch(engi_board)
+		{
+			case ENGICAM_RESISTIVE_SK:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_resistive_sk, ARRAY_SIZE(mx6q_icore_pads_resistive_sk));
+			break;
+
+			case ENGICAM_RESISTIVE_OF:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_resistive_of, ARRAY_SIZE(mx6q_icore_pads_resistive_of));
+			break;
+
+			case ENGICAM_CAPACITIVE_OF:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_capacitive_of, ARRAY_SIZE(mx6q_icore_pads_capacitive_of));
+			break;
+
+			case ENGICAM_CAPACITIVE_OF_AMP:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_capacitive_ofamp, ARRAY_SIZE(mx6q_icore_pads_capacitive_ofamp));
+			break;
+
+			case ENGICAM_CAPACITIVE_SK:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_capacitive_sk, ARRAY_SIZE(mx6q_icore_pads_capacitive_sk));
+			break;
+		}
+	}
+	else
+	{
+		switch(engi_board)
+		{
+			case ENGICAM_RESISTIVE_SK:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_resistive_sk, ARRAY_SIZE(mx6dl_icore_pads_resistive_sk));
+			break;
+
+			case ENGICAM_RESISTIVE_OF:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_resistive_of, ARRAY_SIZE(mx6dl_icore_pads_resistive_of));
+			break;
+
+			case ENGICAM_CAPACITIVE_OF:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_capacitive_of, ARRAY_SIZE(mx6dl_icore_pads_capacitive_of));
+			break;
+
+			case ENGICAM_CAPACITIVE_OF_AMP:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_capacitive_ofamp, ARRAY_SIZE(mx6dl_icore_pads_capacitive_ofamp));
+			break;
+
+			case ENGICAM_CAPACITIVE_SK:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_capacitive_sk, ARRAY_SIZE(mx6dl_icore_pads_capacitive_sk));
+			break;
+		}
+	}
+}
+
+static void icore_customized_i2c_init (void)
+{
+	switch(engi_board)
+	{
+		case ENGICAM_RESISTIVE_SK:
+			i2c_register_board_info(2, mxc_i2c2_board_info_skres,	ARRAY_SIZE(mxc_i2c2_board_info_skres));
+		break;
+
+		case ENGICAM_RESISTIVE_OF:
+			i2c_register_board_info(2, mxc_i2c2_board_info_ofres,	ARRAY_SIZE(mxc_i2c2_board_info_ofres));
+		break;
+
+		case ENGICAM_CAPACITIVE_OF:
+			i2c_register_board_info(2, mxc_i2c2_board_info_ofcap,	ARRAY_SIZE(mxc_i2c2_board_info_ofcap));
+		break;
+
+		case ENGICAM_CAPACITIVE_OF_AMP:
+			i2c_register_board_info(2, mxc_i2c2_board_info_ofamp,	ARRAY_SIZE(mxc_i2c2_board_info_ofamp));
+		break;
+
+		case ENGICAM_CAPACITIVE_SK:
+			i2c_register_board_info(2, mxc_i2c2_board_info_skcap,	ARRAY_SIZE(mxc_i2c2_board_info_skcap));
+		break;
+	}
+}
+
 /*!
  * Board specific initialization.
  */
@@ -1419,45 +1594,23 @@ static void __init mx6_icore_board_init(void)
 	struct clk *new_parent;
 	int rate;
 
-	if (cpu_is_mx6q()) {
-		printk(KERN_ERR "------------ Board type %s\n",
-        	       "i.Core M6Q/D based");
-		mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads,
-					ARRAY_SIZE(mx6q_icore_pads));
-
+	if (cpu_is_mx6q()) 
+	{
+		printk(KERN_ERR "------------ Board type %s\n", "i.Core M6Q/D based");
+		mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads, ARRAY_SIZE(mx6q_icore_pads));
 	}
-	else	{
-		printk(KERN_ERR "------------ Board type %s\n",
-        	       "i.Core M6DL/S based");
-		mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads,
-					ARRAY_SIZE(mx6dl_icore_pads));
+	else	
+	{
+		printk(KERN_ERR "------------ Board type %s\n", "i.Core M6DL/S based");
+		mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads, ARRAY_SIZE(mx6dl_icore_pads));
+		
 		if(cpu_is_mx6dl())
 			printk(KERN_ERR "Test cpu_is_mx6dl PASSED\n");
 		else
 			printk(KERN_ERR "Test cpu_is_mx6dl FAILED\n");
-
 	}
 
-#ifdef CONFIG_MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT
-	printk("Engicam capacitive starterkit\n");
-#endif
-
-#ifdef CONFIG_MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
-	printk("Engicam resistive touch OpenFrame\n");
-#endif
-
-#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP
-	printk("Engicam capacitive touch OpenFrame");
-	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_EDT_7
-	printk(" based on 7 inch. EDT LCD\n");
-	#else
-		#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP_AMPIRE
-		printk(" based on 7 inch. Ampire LCD\n");
-		#else
-		printk("\n");
-		#endif
-	#endif
-#endif
+	icore_customized_board_init();
 
 	#ifdef CONFIG_MACH_MX6Q_MINIMUM_FREQ400
 	printk("CPU Minum freq forced to 400 Mhz.\n");
@@ -1519,6 +1672,8 @@ static void __init mx6_icore_board_init(void)
 			ARRAY_SIZE(mxc_i2c1_board_info));
 	i2c_register_board_info(2, mxc_i2c2_board_info,
 			ARRAY_SIZE(mxc_i2c2_board_info));
+
+	icore_customized_i2c_init();
 
 	/* SPI */
 //	imx6q_add_ecspi(0, &mx6q_icore_spi_data);
@@ -1607,7 +1762,6 @@ static void __init mx6_icore_board_init(void)
 	gpio_set_value(ICORE_M6_WF111_RESET,1);
 
 	
-
 	#ifdef CONFIG_SERIAL_RS485_ENABLE
 	gpio_request(UART3_CS485, "UART3_CS485");
 	gpio_direction_output(UART3_CS485, 0);
@@ -1615,12 +1769,13 @@ static void __init mx6_icore_board_init(void)
 	#endif
 
 	// Init LVDS for openframe capacitive
-	#ifdef CONFIG_MACH_MX6Q_ICORE_OF_CAP
-	gpio_request(OFC_LVDS_ENABLE, "OFC_LVDS_ENABLE");
-	gpio_direction_output(OFC_LVDS_ENABLE, 0);
-	gpio_set_value(OFC_LVDS_ENABLE, 0);
-	gpio_free(OFC_LVDS_ENABLE);
-	#endif
+	if(engi_board==ENGICAM_CAPACITIVE_OF || engi_board==ENGICAM_CAPACITIVE_OF_AMP)
+	{
+		gpio_request(OFC_LVDS_ENABLE, "OFC_LVDS_ENABLE");
+		gpio_direction_output(OFC_LVDS_ENABLE, 0);
+		gpio_set_value(OFC_LVDS_ENABLE, 0);
+		gpio_free(OFC_LVDS_ENABLE);
+	}
 
 }
 
@@ -1667,33 +1822,34 @@ static void __init mx6q_icore_reserve(void)
  */
 void mx6q_icore_lvds_power(bool bStatus)
 {
-	#ifdef CONFIG_MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
-	static bool bFirstTime=true;
-	static bool bPreviusStatus=false;
-
-	// If there is no change with the previus status the fuction end
-	if(bPreviusStatus==bStatus && bFirstTime==false)
- 		return;
-	bFirstTime=false;
-	bPreviusStatus=bStatus;
-
-	if (cpu_is_mx6q())
-		mxc_iomux_v3_setup_pad(MX6Q_PAD_CSI0_DAT14__GPIO_6_0);
-	else
-		mxc_iomux_v3_setup_pad(MX6DL_PAD_CSI0_DAT14__GPIO_6_0);
-	gpio_request(ICORE_M6_OF_LVDS_RESET, "LVDS_OF_RESET");
-	gpio_direction_output(ICORE_M6_OF_LVDS_RESET, 0);
-	if(bStatus)
+	if(engi_board==ENGICAM_RESISTIVE_OF)
 	{
-		mdelay(30);
-		gpio_set_value(ICORE_M6_OF_LVDS_RESET, 1);	
+		static bool bFirstTime=true;
+		static bool bPreviusStatus=false;
+
+		// If there is no change with the previus status the fuction end
+		if(bPreviusStatus==bStatus && bFirstTime==false)
+	 		return;
+		bFirstTime=false;
+		bPreviusStatus=bStatus;
+
+		if (cpu_is_mx6q())
+			mxc_iomux_v3_setup_pad(MX6Q_PAD_CSI0_DAT14__GPIO_6_0);
+		else
+			mxc_iomux_v3_setup_pad(MX6DL_PAD_CSI0_DAT14__GPIO_6_0);
+		gpio_request(ICORE_M6_OF_LVDS_RESET, "LVDS_OF_RESET");
+		gpio_direction_output(ICORE_M6_OF_LVDS_RESET, 0);
+		if(bStatus)
+		{
+			mdelay(30);
+			gpio_set_value(ICORE_M6_OF_LVDS_RESET, 1);	
+		}
+		else
+		{
+			gpio_set_value(ICORE_M6_OF_LVDS_RESET, 0);
+		}
+		gpio_free(ICORE_M6_OF_LVDS_RESET);
 	}
-	else
-	{
-		gpio_set_value(ICORE_M6_OF_LVDS_RESET, 0);
-	}
-	gpio_free(ICORE_M6_OF_LVDS_RESET);
-	#endif
 }
 
 EXPORT_SYMBOL(mx6q_icore_lvds_power);
