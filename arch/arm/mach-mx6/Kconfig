@@ -28,6 +28,10 @@ config	SOC_IMX6Q
 config	SOC_IMX6SL
 	bool
 
+choice
+	prompt "Freescale MX6 based system type"
+	default MACH_MX6Q_ICORE
+
 config MACH_MX6Q_ARM2
 	bool "Support i.MX 6Quad Armadillo2 platform"
 	select ARCH_MX6Q
@@ -181,7 +185,7 @@ config MACH_MX6Q_SABRELITE
 	  configurations for the board and its peripherals.
 
 config MACH_MX6Q_ICORE
-	bool "Support i.MX 6Q/D/S i.Core platform"
+	bool "Support Engicam i.Core M6 SODIMM platform"
 	select ARCH_MX6Q
 	select SOC_IMX6Q
 	select IMX_HAVE_PLATFORM_IMX_UART
@@ -212,54 +216,12 @@ config MACH_MX6Q_ICORE
 	select IMX_HAVE_PLATFORM_IMX_PCIE
 	select IMX_HAVE_PLATFORM_PERFMON
 	help
-	  Include support for i.MX 6Quad Engicam i.Core platform. This includes specific
+	  Include support for i.MX6 Engicam i.Core SODIMM platform. This includes specific
 	  configurations for the board and its peripherals.
 
-config MACH_MX6Q_MINIMUM_FREQ400
-	bool "Set i.Core minimum freq 400 Mhz"
-       depends on MACH_MX6Q_ICORE || MACH_ICORE_M6_RQS
-	help
-	  This features set the minimum CPU clock frequency to 400 Mhz instead of 200 Mhz.
-	  Recommended option for the use of video codecs.
-
-config MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
-	bool "Support i.Core resistive OpenFrame"
-       depends on MACH_MX6Q_ICORE
-	help
-	  Include the support for Engicam openframe. This features enabled
-	  the correct power up and power down of the on-board LVDS controller.
-          This features is mandatory.
-
-config MACH_MX6Q_ICORE_OF_CAP
-	bool "Support i.Core capacitive OpenFrame"
-       depends on MACH_MX6Q_ICORE
-	help
-	  Include support for Engicam cap open frame. This includes specific
-	  configurations for the board and its peripherals; included LVDS 
-	  board configuration.
-
-config MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT
-	bool "Support i.Core capacitive Starterkit"
-       depends on MACH_MX6Q_ICORE
-	help
-	  Include support for Engicam starterkit EDT capacitive LCD
-	  included LVDS board configuration. Please remove the support for
-          capacitive openframe.
-
-config MACH_MX6Q_ICORE_OF_CAP_EDT_7
-	bool "Support i.Core capacitive open frame Edt LCD"
-       depends on MACH_MX6Q_ICORE_OF_CAP
-	help
-	  Include support for Engicam Edt capacitive open frame.
-
-config MACH_MX6Q_ICORE_OF_CAP_AMPIRE
-	bool "Support i.Core capacitive open frame Ampire LCD"
-       depends on MACH_MX6Q_ICORE_OF_CAP
-	help
-	  Include support for Engicam Ampire capacitive open frame.
 
 config MACH_ICORE_M6_RQS
-	bool "Support i.Core M6 RQS platform"
+	bool "Support Engicam i.Core RQS QSEVEN platform"
 	select ARCH_MX6Q
 	select SOC_IMX6Q
 	select IMX_HAVE_PLATFORM_IMX_UART
@@ -290,7 +252,7 @@ config MACH_ICORE_M6_RQS
 	select IMX_HAVE_PLATFORM_IMX_PCIE
 	select IMX_HAVE_PLATFORM_PERFMON
 	help
-	  Include support for i.MX6 Engicam i.Core RQS platform. 
+	  Include support for i.MX6 Engicam i.Core RQS QSEVEN platform. 
 	  This includes specific
 	  configurations for the board and its peripherals.
 config MACH_MX6Q_SABRESD
@@ -394,7 +356,52 @@ config MACH_MX6Q_HDMIDONGLE
 	help
 	  Include support for i.MX 6Quad HDMI Dongle platform. This includes specific
 	  configurations for the board and its peripherals.
+endchoice
 
+config MACH_MX6Q_MINIMUM_FREQ400
+	bool "Set i.Core minimum freq 400 Mhz"
+       depends on MACH_MX6Q_ICORE || MACH_ICORE_M6_RQS
+	help
+	  This features set the minimum CPU clock frequency to 400 Mhz instead of 200 Mhz.
+	  Recommended option for the use of video codecs.
+
+comment "Engicam carrier board options:"
+
+config MACH_MX6Q_ICORE_OPENFRAME_RESISTIVE
+	bool "Support i.Core resistive OpenFrame"
+       depends on MACH_MX6Q_ICORE
+	help
+	  Include the support for Engicam openframe. This features enabled
+	  the correct power up and power down of the on-board LVDS controller.
+          This features is mandatory.
+
+config MACH_MX6Q_ICORE_OF_CAP
+	bool "Support i.Core capacitive OpenFrame"
+       depends on MACH_MX6Q_ICORE
+	help
+	  Include support for Engicam cap open frame. This includes specific
+	  configurations for the board and its peripherals; included LVDS 
+	  board configuration.
+
+config MACH_MX6Q_ICORE_STARTERKIT_CAP_EDT
+	bool "Support i.Core capacitive Starterkit"
+       depends on MACH_MX6Q_ICORE
+	help
+	  Include support for Engicam starterkit EDT capacitive LCD
+	  included LVDS board configuration. Please remove the support for
+          capacitive openframe.
+
+config MACH_MX6Q_ICORE_OF_CAP_EDT_7
+	bool "Support i.Core capacitive open frame Edt LCD"
+       depends on MACH_MX6Q_ICORE_OF_CAP
+	help
+	  Include support for Engicam Edt capacitive open frame.
+
+config MACH_MX6Q_ICORE_OF_CAP_AMPIRE
+	bool "Support i.Core capacitive open frame Ampire LCD"
+       depends on MACH_MX6Q_ICORE_OF_CAP
+	help
+	  Include support for Engicam Ampire capacitive open frame.
 comment "MX6 Options:"
 
 config IMX_PCIE
