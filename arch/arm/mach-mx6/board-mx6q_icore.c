@@ -171,7 +171,15 @@ static int engi_board_setup(char *str)
 
 __setup("engi_board=", engi_board_setup);
 
+
+/* Conatins the correct value of RAM memory size. The complete value is
+*  available  only after calling the fuction mx6q_icore_check_ram_size 
+*  prior to reszerve any memory areas.
+*/
+static int iRamMemorySize=0;
+
 void __init early_console_setup(unsigned long base, struct clk *clk);
+static void mx6q_icore_check_ram_size (void);
 static struct clk *sata_clk;
 
 static int max11801_mode = 0;
@@ -1802,10 +1810,11 @@ static void __init mx6q_icore_reserve(void)
 {
 	phys_addr_t phys;
 
-	if (!cpu_is_mx6q())		// i.Core M6Solo con 256MB RAM
+	mx6q_icore_check_ram_size();
+
+	if (iRamMemorySize < 512)
 		imx6q_gpu_pdata.reserved_mem_size = SZ_32M;
-
-
+	
 	if (imx6q_gpu_pdata.reserved_mem_size) {
 		phys = memblock_alloc_base(imx6q_gpu_pdata.reserved_mem_size,
 					   SZ_4K, SZ_1G);
@@ -1815,7 +1824,23 @@ static void __init mx6q_icore_reserve(void)
 	}
 }
 
-
+/* Calculate on startup time the RAM memory size for be 
+*  used during initialization process
+*/
+static void mx6q_icore_check_ram_size (void)
+{
+	struct memblock_region *reg;
+	 /* Since our memory may not be contiguous, calculate the
+	 * real number of pages we have in this system
+	 */
+	num_physpages = 0;
+	for_each_memblock(memory, reg) {
+		unsigned long pages = memblock_region_memory_end_pfn(reg) -
+			memblock_region_memory_base_pfn(reg);
+		num_physpages += pages;
+	}
+	iRamMemorySize = num_physpages >> (20 - PAGE_SHIFT);
+}
 
 /*
  * Set the LVDS power on control
