@@ -126,6 +126,8 @@ enum engicam_board
         ENGICAM_LAST_BOARD
 };
 
+#define ENGICAM_DEFAULT_BOARD 		ENGICAM_RESISTIVE_SK
+
 static char* engi_board_str[] =
 {
         "SK.RES",
@@ -148,7 +150,7 @@ static char* engi_board_description_str[] =
         /* add here a new description board */
 };
 
-static unsigned int engi_board = ENGICAM_RESISTIVE_SK;
+static unsigned int engi_board = ENGICAM_DEFAULT_BOARD;
 
 /*
  * Detect from the bootargs witch engicam custom board is if setted
@@ -164,7 +166,7 @@ static int engi_board_setup(char *str)
 
         // If not match RESISTIVE_SK will be the default value
         if(engi_board>=ENGICAM_LAST_BOARD)
-                engi_board=ENGICAM_RESISTIVE_SK;
+                engi_board=ENGICAM_DEFAULT_BOARD;
 
         return 0;
 }
@@ -1039,6 +1041,8 @@ static struct i2c_board_info mxc_i2c2_board_info[] __initdata = {
 		I2C_BOARD_INFO("sgtl5000", 0x0a),
 	},
 };
+
+/* Engicam board I2C initialization */
 
 static struct i2c_board_info mxc_i2c2_board_info_skres[] __initdata = {
 	{

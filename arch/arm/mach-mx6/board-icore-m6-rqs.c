@@ -109,6 +109,52 @@
 #define OBSRV_MUX1_ENET_IRQ		0x9
 #endif
 
+enum engicam_board
+{
+        ENGICAM_Q7_SK=0,
+
+        ENGICAM_LAST_BOARD
+};
+
+#define ENGICAM_DEFAULT_BOARD 		ENGICAM_Q7_SK
+
+static char* engi_board_str[] =
+{
+        "SK.Q7",
+
+        /* add here a new board */
+};
+
+static char* engi_board_description_str[] =
+{
+        "Engicam QSEVEN Starterkit",
+
+        /* add here a new description board */
+};
+
+static unsigned int engi_board = ENGICAM_DEFAULT_BOARD;
+
+/*
+ * Detect from the bootargs witch engicam custom board is if setted
+ */
+static int engi_board_setup(char *str)
+{
+        engi_board = 0;
+
+        while( engi_board<ENGICAM_LAST_BOARD && strcmp(str, engi_board_str[engi_board] ) )
+        {
+                engi_board++;
+        }
+
+        // If not match RESISTIVE_SK will be the default value
+        if(engi_board>=ENGICAM_LAST_BOARD)
+                engi_board=ENGICAM_DEFAULT_BOARD;
+
+        return 0;
+}
+
+__setup("engi_board=", engi_board_setup);
+
 /* Conatins the correct value of RAM memory size. The complete value is
 *  available  only after calling the fuction mx6q_icore_check_ram_size 
 *  prior to reszerve any memory areas.
@@ -255,6 +301,13 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 
 };
 
+/* Engicam board pin initialization for mx6q*/
+
+static iomux_v3_cfg_t mx6q_rqs_pads_sk[] =
+{
+
+};
+
 static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	/* CAN1  */
 	MX6DL_PAD_KEY_ROW2__CAN1_RXCAN,
@@ -380,6 +433,13 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_GPIO_6__OBSERVE_MUX_OBSRV_INT_OUT1,
 #else
 #endif
+
+};
+
+/* Engicam board pin initialization for mx6dl*/
+
+static iomux_v3_cfg_t mx6dl_rqs_pads_sk[] =
+{
 
 };
 
@@ -715,6 +775,13 @@ static struct i2c_board_info mxc_i2c2_board_info[] __initdata = {
 		I2C_BOARD_INFO("sgtl5000", 0x0a),
 	},
 };
+
+/* Engicam board I2C initialization */
+
+static struct i2c_board_info mxc_i2c2_board_info_sk[] __initdata = {
+	
+};
+
 
 static void imx6q_icore_usbotg_vbus(bool on)
 {
@@ -1126,6 +1193,40 @@ static inline void __init mx6q_csi0_io_init(void)
 		mxc_iomux_set_gpr_register(13, 0, 3, 4);
 }
 
+static void rqs_customized_board_init (void)
+{
+	printk("%s selected.", engi_board_description_str[engi_board] );	
+	
+	if (cpu_is_mx6q())
+	{
+		switch(engi_board)
+		{
+			case ENGICAM_Q7_SK:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_rqs_pads_sk, ARRAY_SIZE(mx6q_rqs_pads_sk));
+			break;
+		}
+	}
+	else
+	{
+		switch(engi_board)
+		{
+			case ENGICAM_Q7_SK:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_rqs_pads_sk, ARRAY_SIZE(mx6dl_rqs_pads_sk));
+			break;
+		}
+	}
+}
+
+static void rqs_customized_i2c_init (void)
+{
+	switch(engi_board)
+	{
+		case ENGICAM_Q7_SK:
+			i2c_register_board_info(2, mxc_i2c2_board_info_sk,	ARRAY_SIZE(mxc_i2c2_board_info_sk));
+		break;
+	}
+}
+
 /*!
  * Board specific initialization.
  */
@@ -1158,6 +1259,12 @@ static void __init mx6_icore_board_init(void)
 			printk(KERN_ERR "Test cpu_is_mx6dl FAILED\n");
 
 	}
+
+	rqs_customized_board_init();
+
+	#ifdef CONFIG_MACH_MX6Q_MINIMUM_FREQ400
+	printk("CPU Minum freq forced to 400 Mhz.\n");
+	#endif
 
 #ifdef CONFIG_FEC_1588
 	/* Set GPIO_16 input for IEEE-1588 ts_clk and RMII reference clock
@@ -1214,6 +1321,8 @@ static void __init mx6_icore_board_init(void)
 			ARRAY_SIZE(mxc_i2c1_board_info));
 	i2c_register_board_info(2, mxc_i2c2_board_info,
 			ARRAY_SIZE(mxc_i2c2_board_info));
+
+	rqs_customized_i2c_init();
 
 	/* SPI ... TODO su ECSPI3*/
 //	imx6q_add_ecspi(0, &mx6q_icore_spi_data);
