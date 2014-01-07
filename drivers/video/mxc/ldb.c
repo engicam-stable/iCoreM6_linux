@@ -138,7 +138,7 @@ static struct fb_videomode ldb_modedb[] = {
 	{
 	 /* 800x480 @ 60 Hz */ 
 	 "HIT-LVDS" , 60, 800, 600, 30000, 30, 30, 5, 5, 64, 20,
-	 /*FB_SYNC_CLK_IDLE_EN |*/ FB_SYNC_CLK_LAT_FALL,
+	 0,
 	 FB_VMODE_NONINTERLACED,
 	 0,},
 	{
