@@ -941,9 +941,9 @@ static struct ipuv3_fb_platform_data icore_fb_data[] = {
          .int_clk              = false,
 	}, {
 	.disp_dev = "lcd",
-	.interface_pix_fmt = IPU_PIX_FMT_RGB565,
+	.interface_pix_fmt = IPU_PIX_FMT_RGB666,
 	.mode_str = "Amp-WD",
-	.default_bpp = 16,
+	.default_bpp = 18,
 	.int_clk = false,
 	},
 };
@@ -979,7 +979,7 @@ static struct fsl_mxc_hdmi_platform_data hdmi_data = {
 
 static struct fsl_mxc_hdmi_core_platform_data hdmi_core_data = {
 	.ipu_id = 0,
-	.disp_id = 1,
+	.disp_id = 0,
 };
 
 #if 0
@@ -990,12 +990,11 @@ static struct fsl_mxc_lcd_platform_data lcdif_data = {
 };
 #endif
 static struct fsl_mxc_ldb_platform_data ldb_data = {
-	.ipu_id = 1,
+	.ipu_id = 0,
 	.disp_id = 0,
 	.ext_ref = 1,
-//	.mode = LDB_SEP0,
 	.mode = LDB_SEP1,
-	.sec_ipu_id = 1,
+	.sec_ipu_id = 0,
 	.sec_disp_id = 1,
 };
 
@@ -1281,10 +1280,10 @@ static void __init mx6_icore_board_init(void)
 
 	mx6q_icore_init_uart();
 
-	if (!cpu_is_mx6q()) {
-		ldb_data.ipu_id = 0;
+	if (!cpu_is_mx6dl()) {
+		ldb_data.ipu_id = 1;
 		ldb_data.disp_id = 0;
-		ldb_data.sec_ipu_id = 0;
+		ldb_data.sec_ipu_id = 1;
 		ldb_data.sec_disp_id = 1;
 		hdmi_core_data.disp_id = 1;
 	}
