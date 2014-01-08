@@ -49,7 +49,13 @@ static struct fb_videomode lcdif_modedb[] = {
 	 "URT-LVDS" , 60, 800, 480, 30000, 30, 30, 5, 5, 64, 20,
 	 /*FB_SYNC_CLK_IDLE_EN |*/ FB_SYNC_CLK_LAT_FALL,
 	 FB_VMODE_NONINTERLACED,
-	 0,},                                           
+	 0,},   
+	 {   
+	 /* 800x480 @ 60 Hz OPENFRAME 10.4'' */ 
+	 "HIT-LVDS" , 60, 800, 600, 30000, 30, 30, 5, 5, 64, 20,
+	 /*FB_SYNC_CLK_IDLE_EN |*/ FB_SYNC_CLK_LAT_FALL,
+	 FB_VMODE_NONINTERLACED,
+	 0,},                                        
 	{
 	/* 800x480 @ 60 Hz , pixel clk @ 32MHz */
 	"SEIKO-WVGA", 60, 800, 480, 29850, 89, 164, 23, 10, 10, 10,
