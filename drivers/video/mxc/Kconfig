@@ -39,6 +39,12 @@ config FB_MXC_LDB
 	depends on FB_MXC_SYNC_PANEL
 	depends on MXC_IPU_V3
 
+config LDBCLOCK_LESS_THAN38MHZ
+	bool "LVDS clock < 38 Mhz"
+	depends on FB_MXC_LDB
+	help
+	  Select this option if you need a clock less than 38 Mhz for your LVDS display.
+
 config FB_MXC_MIPI_DSI
 	tristate "MXC MIPI_DSI"
 	depends on FB_MXC_SYNC_PANEL
