@@ -108,8 +108,8 @@
 #define ICORE_M6_CSI0_PWN	IMX_GPIO_NR(1, 6)
 #define ICORE_M6_WF111_RESET	IMX_GPIO_NR(1, 2)
 #define ICORE_M6_OF_LVDS_RESET	IMX_GPIO_NR(6, 0)
-
-#define MX6_ICORE_BACKLIGHT3 	IMX_GPIO_NR(2, 9)
+#define ICORE_MODULE_VERSION    IMX_GPIO_NR(7, 2)
+#define ICORE_BACKLIGHT3 	IMX_GPIO_NR(2, 9)
 
 #define ICORE_M6_SD3_WP_PADCFG	(PAD_CTL_PKE | PAD_CTL_PUE |	\
 		PAD_CTL_PUS_22K_UP | PAD_CTL_SPEED_MED |	\
@@ -173,6 +173,41 @@ static int engi_board_setup(char *str)
 
 __setup("engi_board=", engi_board_setup);
 
+enum icore_modul_vers
+{
+        ICORE_VERS_MINOR_D=0,
+        ICORE_VERS_GREATER_D,
+
+        ICORE_VERS_LAST
+};
+
+static char* icore_module_vers_str[] =
+{
+        "< RevD",
+        ">= RevD",
+};
+
+static unsigned int icore_mudule_vers = ICORE_VERS_LAST;
+
+/*!
+ * Get the module revision reading GPIO
+ */
+void icore_init_module_version (void)
+{
+	if(cpu_is_mx6q())
+		mxc_iomux_v3_setup_pad(MX6Q_PAD_SD3_CMD__GPIO_7_2);
+	else
+		mxc_iomux_v3_setup_pad(MX6DL_PAD_SD3_CMD__GPIO_7_2);
+
+	gpio_direction_input(ICORE_MODULE_VERSION);
+	
+	if(gpio_get_value(ICORE_MODULE_VERSION) == 0)
+		icore_mudule_vers=ICORE_VERS_GREATER_D;
+	else
+		icore_mudule_vers=ICORE_VERS_MINOR_D;
+	
+	gpio_free(ICORE_MODULE_VERSION);
+}
 
 /* Conatins the correct value of RAM memory size. The complete value is
 *  available  only after calling the fuction mx6q_icore_check_ram_size 
@@ -217,7 +252,6 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	/* ENET */
 	MX6Q_PAD_ENET_CRS_DV__ENET_RX_EN 	,
 	MX6Q_PAD_GPIO_16__ENET_ANATOP_ETHERNET_REF_OUT,
-	MX6Q_PAD_ENET_RX_ER__ENET_RX_ER		,
 	MX6Q_PAD_ENET_TX_EN__ENET_TX_EN		,
 	MX6Q_PAD_ENET_RXD1__ENET_RDATA_1	,
 	MX6Q_PAD_ENET_RXD0__ENET_RDATA_0	,
@@ -298,10 +332,6 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	MX6Q_PAD_KEY_COL0__UART4_TXD,
 	MX6Q_PAD_KEY_ROW0__UART4_RXD,
 
-	/* USBOTG ID pin */
-	MX6Q_PAD_GPIO_1__USBOTG_ID,
-
-
 	/* USB OC pin */
 //	MX6Q_PAD_KEY_COL4__USBOH3_USBOTG_OC,
 
@@ -338,9 +368,27 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	MX6Q_PAD_CSI0_VSYNC__IPU1_CSI0_VSYNC,
 	MX6Q_PAD_CSI0_MCLK__IPU1_CSI0_HSYNC,
 	MX6Q_PAD_CSI0_PIXCLK__IPU1_CSI0_PIXCLK,
+
+	/* module revision detect */
+	MX6Q_PAD_SD3_CMD__GPIO_7_2,
 };
 
-/* Engicam board pin initialization for mx6q*/
+/* iCore module revision pin initialization for mx6q */
+
+static iomux_v3_cfg_t mx6q_icore_pads_minor_D[] = {
+	MX6Q_PAD_ENET_RX_ER__ENET_RX_ER,
+};
+
+static iomux_v3_cfg_t mx6q_icore_pads_greater_D[] = {
+	MX6Q_PAD_ENET_RX_ER__ANATOP_USBOTG_ID,
+};
+
+static iomux_v3_cfg_t mx6q_icore_pads_forced_of_cap[] = {
+	MX6Q_PAD_ENET_RX_ER__ANATOP_USBOTG_ID,
+};
+
+
+/* Engicam board pin initialization for mx6q */
 
 static iomux_v3_cfg_t mx6q_icore_pads_resistive_sk[] = {
 	MX6Q_PAD_CSI0_DAT12__IPU1_CSI0_D_12,
@@ -390,7 +438,6 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	/* ENET */
 	MX6DL_PAD_ENET_CRS_DV__ENET_RX_EN 	,
 	MX6DL_PAD_GPIO_16__ENET_ANATOP_ETHERNET_REF_OUT,
-	MX6DL_PAD_ENET_RX_ER__ENET_RX_ER		,
 	MX6DL_PAD_ENET_TX_EN__ENET_TX_EN		,
 	MX6DL_PAD_ENET_RXD1__ENET_RDATA_1	,
 	MX6DL_PAD_ENET_RXD0__ENET_RDATA_0	,
@@ -469,10 +516,6 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_KEY_COL0__UART4_TXD,
 	MX6DL_PAD_KEY_ROW0__UART4_RXD,
 
-	/* USBOTG ID pin */
-	MX6DL_PAD_GPIO_1__USBOTG_ID,
-
-
 	/* USB OC pin */
 //	MX6DL_PAD_KEY_COL4__USBOH3_USBOTG_OC,
 
@@ -508,7 +551,26 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_CSI0_VSYNC__IPU1_CSI0_VSYNC,
 	MX6DL_PAD_CSI0_MCLK__IPU1_CSI0_HSYNC,
 	MX6DL_PAD_CSI0_PIXCLK__IPU1_CSI0_PIXCLK,
+
+	/* module revision detect */
+	MX6DL_PAD_SD3_CMD__GPIO_7_2,
 };
+
+
+/* iCore module revision pin initialization for mx6q */
+
+static iomux_v3_cfg_t mx6dl_icore_pads_minor_D[] = {
+	MX6DL_PAD_ENET_RX_ER__ENET_RX_ER,
+};
+
+static iomux_v3_cfg_t mx6dl_icore_pads_greater_D[] = {
+	MX6DL_PAD_ENET_RX_ER__ANATOP_USBOTG_ID,
+};
+
+static iomux_v3_cfg_t mx6dl_icore_pads_forced_of_cap[] = {
+	MX6DL_PAD_ENET_RX_ER__ANATOP_USBOTG_ID,
+};
+
 
 /* Engicam board pin initialization for mx6dl */
 
@@ -1008,6 +1070,10 @@ static struct imxi2c_platform_data mx6q_icore_i2c_data = {
 
 
 static struct i2c_board_info mxc_i2c0_board_info[] __initdata = {
+	
+};
+
+static struct i2c_board_info mxc_i2c0_max11801_info[] __initdata = {
 	{
 		I2C_BOARD_INFO("max11801", 0x48),
 		.platform_data = (void *)&max11801_mode,
@@ -1514,6 +1580,9 @@ static inline void __init mx6q_csi0_io_init(void)
 		mxc_iomux_set_gpr_register(13, 0, 3, 4);
 }
 
+/*!
+ * Board specific initialization of pads control
+ */
 static void icore_customized_board_init (void)
 {
 	printk("%s selected.", engi_board_description_str[engi_board] );	
@@ -1570,16 +1639,63 @@ static void icore_customized_board_init (void)
 	}
 }
 
+/*!
+ * Sepcific inizialization for module revision
+ */
+void icore_customized_version_init (void)
+{
+	printk("Module revision %s.\n", icore_module_vers_str[icore_mudule_vers]);	
+	
+	if (cpu_is_mx6q())
+	{
+		switch(icore_mudule_vers)
+		{
+			case ICORE_VERS_MINOR_D:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_minor_D, ARRAY_SIZE(mx6q_icore_pads_minor_D));
+
+				if(engi_board == ENGICAM_CAPACITIVE_OF) // For openframe capacitive forced to inizialize USB OTG on host device
+					mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_forced_of_cap, ARRAY_SIZE(mx6q_icore_pads_forced_of_cap));
+			break;
+
+			case ICORE_VERS_GREATER_D:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_greater_D, ARRAY_SIZE(mx6q_icore_pads_greater_D));
+			break;
+		}
+	}
+	else
+	{
+		switch(icore_mudule_vers)
+		{
+			case ICORE_VERS_MINOR_D:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_minor_D, ARRAY_SIZE(mx6dl_icore_pads_minor_D));
+
+				if(engi_board == ENGICAM_CAPACITIVE_OF) // For openframe capacitive forced to inizialize USB OTG on host device
+					mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_forced_of_cap, ARRAY_SIZE(mx6dl_icore_pads_forced_of_cap));
+			break;
+
+			case ICORE_VERS_GREATER_D:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_greater_D, ARRAY_SIZE(mx6dl_icore_pads_greater_D));
+			break;
+		}
+	}	
+
+}
+
+/*!
+ * Board specific initialization of i2c channels
+ */
 static void icore_customized_i2c_init (void)
 {
 	switch(engi_board)
 	{
 		case ENGICAM_RESISTIVE_SK:
 			i2c_register_board_info(2, mxc_i2c2_board_info_skres,	ARRAY_SIZE(mxc_i2c2_board_info_skres));
+			i2c_register_board_info(0, mxc_i2c0_max11801_info,	ARRAY_SIZE(mxc_i2c0_max11801_info));
 		break;
 
 		case ENGICAM_RESISTIVE_OF:
 			i2c_register_board_info(2, mxc_i2c2_board_info_ofres,	ARRAY_SIZE(mxc_i2c2_board_info_ofres));
+			i2c_register_board_info(0, mxc_i2c0_max11801_info,	ARRAY_SIZE(mxc_i2c0_max11801_info));
 		break;
 
 		case ENGICAM_CAPACITIVE_OF:
@@ -1622,6 +1738,8 @@ static void __init mx6_icore_board_init(void)
 			printk(KERN_ERR "Test cpu_is_mx6dl FAILED\n");
 	}
 
+	icore_init_module_version();
+	icore_customized_version_init();
 	icore_customized_board_init();
 
 	#ifdef CONFIG_MACH_MX6Q_MINIMUM_FREQ400
@@ -1732,8 +1850,8 @@ static void __init mx6_icore_board_init(void)
 	imx6q_add_mxc_pwm_backlight(3, &mx6_icore_pwm_backlight_data);
 #endif
 
-	gpio_request(MX6_ICORE_BACKLIGHT3, "backlight-pwm3");
-	gpio_direction_output(MX6_ICORE_BACKLIGHT3, 0);
+	gpio_request(ICORE_BACKLIGHT3, "backlight-pwm3");
+	gpio_direction_output(ICORE_BACKLIGHT3, 0);
 
 	imx6q_add_mxc_pwm(2);
 	imx6q_add_mxc_pwm_backlight(0, &mx6_icore_pwm0_backlight_data);
