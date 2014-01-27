@@ -105,7 +105,7 @@ static int g_ldb_mode;
 
 static struct fb_videomode ldb_modedb[] = {
 	{
-	 /* 800x480 @ 60 Hz STARTERKIT 7'' */ 
+	 /* 800x480 @ 60 Hz OPENFRAME CAP 7'' */ 
 	 "Amp-WD" , 60, 800, 480, 30000, 
 	 30, 30, 
 	 5, 5, 
@@ -113,7 +113,16 @@ static struct fb_videomode ldb_modedb[] = {
 	 FB_SYNC_CLK_LAT_FALL,
 	 FB_VMODE_NONINTERLACED,
 	 0,},	
-	{
+	 {
+	 /* 1280x800 @ 60 Hz OPENFRAME CAP 10.1'' */ 
+	 "LDB-WXGAI", 60, 1280, 800, 14065,
+	 40, 40,
+	 10, 3,
+	 80, 10,
+	 FB_SYNC_CLK_LAT_FALL,
+	 FB_VMODE_NONINTERLACED,
+	 FB_MODE_IS_DETAILED,},
+	 {
 	 /* 1360x768 */
 	 "LVDS-HDR" , 60, 1360, 768, 13468, 40, 40, 5, 5, 5, 5,
 	 FB_SYNC_CLK_LAT_FALL,
