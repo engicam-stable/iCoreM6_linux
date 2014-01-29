@@ -97,6 +97,7 @@
 #define ICORE_M6_VOL_DOWN_KEY	IMX_GPIO_NR(4, 5)
 #define ICORE_M6_CSI0_RST	IMX_GPIO_NR(1, 8)
 #define ICORE_M6_CSI0_PWN	IMX_GPIO_NR(1, 6)
+#define ICORE_MODULE_VERSION    IMX_GPIO_NR(1, 29)
 
 #define ICORE_M6_SD3_WP_PADCFG	(PAD_CTL_PKE | PAD_CTL_PUE |	\
 		PAD_CTL_PUS_22K_UP | PAD_CTL_SPEED_MED |	\
@@ -155,6 +156,42 @@ static int engi_board_setup(char *str)
 
 __setup("engi_board=", engi_board_setup);
 
+enum icore_modul_vers
+{
+        ICOREQ7_REVMINUS=0,
+        ICOREQ7_REVA,
+
+        ICOREQ7_VERS_LAST
+};
+
+static char* icore_module_vers_str[] =
+{
+        "Rev-",
+        "RevA",
+};
+
+static unsigned int icore_mudule_vers = ICOREQ7_VERS_LAST;
+
+/*!
+ * Get the module revision reading GPIO
+ */
+void rqs_init_module_version (void)
+{
+	if(cpu_is_mx6q())
+		mxc_iomux_v3_setup_pad(MX6Q_PAD_ENET_TXD1__GPIO_1_29);
+	else
+		mxc_iomux_v3_setup_pad(MX6DL_PAD_ENET_TXD1__GPIO_1_29);
+
+	gpio_direction_input(ICORE_MODULE_VERSION);
+	
+	if(gpio_get_value(ICORE_MODULE_VERSION) == 0)
+		icore_mudule_vers=ICOREQ7_REVA;
+	else
+		icore_mudule_vers=ICOREQ7_REVMINUS;
+	
+	gpio_free(ICORE_MODULE_VERSION);
+}
+
 /* Conatins the correct value of RAM memory size. The complete value is
 *  available  only after calling the fuction mx6q_icore_check_ram_size 
 *  prior to reszerve any memory areas.
@@ -202,7 +239,6 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	MX6Q_PAD_RGMII_RD3__ENET_RGMII_RD3,
 	MX6Q_PAD_RGMII_RX_CTL__ENET_RGMII_RX_CTL,
 	MX6Q_PAD_ENET_TX_EN__GPIO_1_28,		/* Micrel RGMII Phy Interrupt */
-	MX6Q_PAD_ENET_RX_ER__GPIO_1_24,		/* RGMII reset */
 
 
 	/* I2C1*/
@@ -290,16 +326,27 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 //	MX6Q_PAD_NANDF_D6__GPIO_2_6,		/* J20 - SD4_CD */
 //	MX6Q_PAD_NANDF_D7__GPIO_2_7,		/* SD4_WP */
 
+	/* module revision detect */
+	MX6Q_PAD_ENET_TXD1__GPIO_1_29,
 
-
-
-
-#ifdef CONFIG_MX6_ENET_IRQ_TO_GPIO
+	#ifdef CONFIG_MX6_ENET_IRQ_TO_GPIO
 	MX6Q_PAD_GPIO_6__OBSERVE_MUX_OBSRV_INT_OUT1,
-#else
-#endif
+	#else
+	#endif
 
 };
+
+
+/* iCore module revision pin initialization for mx6q */
+
+static iomux_v3_cfg_t mx6q_icore_pads_revMINUS[] = {
+	MX6Q_PAD_ENET_RX_ER__GPIO_1_24,				/* RGMII reset */
+};
+
+static iomux_v3_cfg_t mx6q_icore_pads_revA[] = {
+	MX6Q_PAD_ENET_RX_ER__ANATOP_USBOTG_ID,
+};
+
 
 /* Engicam board pin initialization for mx6q*/
 
@@ -337,7 +384,6 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_RGMII_RD3__ENET_RGMII_RD3,
 	MX6DL_PAD_RGMII_RX_CTL__ENET_RGMII_RX_CTL,
 	MX6DL_PAD_ENET_TX_EN__GPIO_1_28,		/* Micrel RGMII Phy Interrupt */
-	MX6DL_PAD_ENET_RX_ER__GPIO_1_24,		/* RGMII reset */
 
 
 	/* I2C1*/
@@ -425,16 +471,27 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 //	MX6DL_PAD_NANDF_D6__GPIO_2_6,		/* J20 - SD4_CD */
 //	MX6DL_PAD_NANDF_D7__GPIO_2_7,		/* SD4_WP */
 
+	/* module revision detect */
+	MX6DL_PAD_ENET_TXD1__GPIO_1_29,
 
-
-
-
-#ifdef CONFIG_MX6_ENET_IRQ_TO_GPIO
+	#ifdef CONFIG_MX6_ENET_IRQ_TO_GPIO
 	MX6DL_PAD_GPIO_6__OBSERVE_MUX_OBSRV_INT_OUT1,
-#else
-#endif
+	#else
+	#endif
 
 };
+
+
+/* iCore module revision pin initialization for mx6q */
+
+static iomux_v3_cfg_t mx6dl_icore_pads_revMINUS[] = {
+	MX6DL_PAD_ENET_RX_ER__GPIO_1_24,			/* RGMII reset */
+};
+
+static iomux_v3_cfg_t mx6dl_icore_pads_revA[] = {
+	MX6DL_PAD_ENET_RX_ER__ANATOP_USBOTG_ID,
+};
+
 
 /* Engicam board pin initialization for mx6dl*/
 
@@ -1216,6 +1273,45 @@ static void rqs_customized_board_init (void)
 	}
 }
 
+/*!
+ * Sepcific inizialization for module revision
+ */
+void rqs_customized_version_init (void)
+{
+	printk("Module revision %s\n", icore_module_vers_str[icore_mudule_vers]);	
+
+	if (cpu_is_mx6q())
+	{
+		switch(icore_mudule_vers)
+		{
+			case ICOREQ7_REVMINUS:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_revMINUS, ARRAY_SIZE(mx6q_icore_pads_revMINUS));
+			break;
+
+			case ICOREQ7_REVA:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_revA, ARRAY_SIZE(mx6q_icore_pads_revA));
+			break;
+		}
+	}
+	else
+	{
+		switch(icore_mudule_vers)
+		{
+			case ICOREQ7_REVMINUS:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_revMINUS, ARRAY_SIZE(mx6dl_icore_pads_revMINUS));
+			break;
+
+			case ICOREQ7_REVA:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_revA, ARRAY_SIZE(mx6dl_icore_pads_revA));
+			break;
+		}
+	}	
+
+}
+
+/*!
+ * Board specific initialization of i2c channels
+ */
 static void rqs_customized_i2c_init (void)
 {
 	switch(engi_board)
@@ -1226,9 +1322,6 @@ static void rqs_customized_i2c_init (void)
 	}
 }
 
-/*!
- * Board specific initialization.
- */
 /*!
  * Board specific initialization.
  */
@@ -1259,6 +1352,8 @@ static void __init mx6_icore_board_init(void)
 
 	}
 
+	rqs_init_module_version();
+	rqs_customized_version_init();
 	rqs_customized_board_init();
 
 	#ifdef CONFIG_MACH_MX6Q_MINIMUM_FREQ400
