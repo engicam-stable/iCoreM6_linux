@@ -158,6 +158,12 @@ static struct fb_videomode ldb_modedb[] = {
 	 0,
 	 FB_VMODE_NONINTERLACED,
 	 FB_MODE_IS_DETAILED,},
+	{
+	/* 1280x480 @ 60 Hz */
+	"LDB-HSXGA", 60, 1280, 480, 18939, 353, 47, 39, 4, 8, 2,
+	FB_SYNC_CLK_LAT_FALL | FB_SYNC_COMP_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
+	FB_VMODE_NONINTERLACED
+         },
 };
 static int ldb_modedb_sz = ARRAY_SIZE(ldb_modedb);
 
