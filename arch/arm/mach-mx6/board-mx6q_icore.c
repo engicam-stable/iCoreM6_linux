@@ -208,6 +208,8 @@ void icore_init_module_version (void)
 	else
 		mxc_iomux_v3_setup_pad(MX6DL_PAD_SD3_CMD__GPIO_7_2);
 
+	gpio_request(ICORE_MODULE_VERSION, "mod-ver");
+
 	gpio_direction_input(ICORE_MODULE_VERSION);
 	
 	if(gpio_get_value(ICORE_MODULE_VERSION) == 0)
