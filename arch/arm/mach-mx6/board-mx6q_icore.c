@@ -84,6 +84,7 @@
 #define MAX11801_TS_IRQ         IMX_GPIO_NR(3, 31)
 #define FT5X06_TS_IRQ           IMX_GPIO_NR(1, 7)
 #define OFC_FT5X06_TS_IRQ       IMX_GPIO_NR(5, 30)
+#define OFC_URT_TS_IRQ       	IMX_GPIO_NR(5, 30)
 #define OFC_LVDS_ENABLE		IMX_GPIO_NR(1, 7)
 #define STARTERKIT_CAPEDT_IRQ	IMX_GPIO_NR(1, 7)
 #define UART3_CS485		IMX_GPIO_NR(3, 23)
@@ -108,6 +109,7 @@
 #define ICORE_M6_CSI0_PWN	IMX_GPIO_NR(1, 6)
 #define ICORE_M6_WF111_RESET_SK	IMX_GPIO_NR(1, 2)
 #define ICORE_M6_WF111_RESET_MP	IMX_GPIO_NR(1, 7)
+#define ICORE_M6_WF111_RESET_URT	IMX_GPIO_NR(6, 2)
 #define ICORE_M6_OF_LVDS_RESET	IMX_GPIO_NR(6, 0)
 #define ICORE_MODULE_VERSION    IMX_GPIO_NR(7, 2)
 #define ICORE_BACKLIGHT3 	IMX_GPIO_NR(2, 9)
@@ -124,6 +126,7 @@ enum engicam_board
 	ENGICAM_CAPACITIVE_OF_AMP,
         ENGICAM_CAPACITIVE_SK,
 	ENGICAM_MEDIAPLAYER_V0,
+	ENGICAM_CAPACITIVE_OF_URT,
 
         ENGICAM_LAST_BOARD
 };
@@ -138,6 +141,7 @@ static char* engi_board_str[] =
 	"OF.AMP",
         "SK.CAP",
 	"MP.000",
+	"UF.CAP",	/* PCAP URT */
 
         /* add here a new board */
 };
@@ -150,6 +154,7 @@ static char* engi_board_description_str[] =
 	"Engicam capacitive Openframe Ampire",
         "Engicam capacitive Starterkit",
 	"Engicam Media Player Ver. 1.00",
+        "Engicam capacitive Openframe URT",
 
         /* add here a new description board */
 };
@@ -424,6 +429,14 @@ static iomux_v3_cfg_t mx6q_icore_pads_mediaplayer[] = {
 	MX6Q_PAD_GPIO_7__GPIO_1_7 ,		/* RESET WF111 */
 };
 
+static iomux_v3_cfg_t mx6q_icore_pads_capacitive_of_urt[] = {
+	MX6Q_PAD_CSI0_DAT12__GPIO_5_30,
+	MX6Q_PAD_CSI0_DAT13__GPIO_5_31,
+	MX6Q_PAD_CSI0_DAT14__UART5_TXD,
+	MX6Q_PAD_CSI0_DAT15__UART5_RXD,
+	MX6Q_PAD_CSI0_DAT16__GPIO_6_2,   	/* RESET WF111 */
+};
+
 static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	/* CAN1  */	
 	MX6DL_PAD_KEY_ROW2__CAN1_RXCAN,
@@ -611,6 +624,14 @@ static iomux_v3_cfg_t mx6dl_icore_pads_mediaplayer[] = {
 	MX6DL_PAD_CSI0_DAT13__GPIO_5_31,
 	MX6DL_PAD_CSI0_DAT14__GPIO_6_0,
 	MX6DL_PAD_GPIO_7__GPIO_1_7, 		/* RESET WF111 */
+};
+
+static iomux_v3_cfg_t mx6dl_icore_pads_capacitive_of_urt[] = {
+	MX6DL_PAD_CSI0_DAT12__GPIO_5_30,
+	MX6DL_PAD_CSI0_DAT13__GPIO_5_31,
+	MX6DL_PAD_CSI0_DAT14__UART5_TXD,
+	MX6DL_PAD_CSI0_DAT15__UART5_RXD,
+	MX6DL_PAD_CSI0_DAT16__GPIO_6_2,   	/* RESET WF111 */
 };
 
 /* The GPMI is conflicted with SD3, so init this in the driver. */
@@ -1177,6 +1198,13 @@ static struct i2c_board_info mxc_i2c2_board_info_mediaplayer[] __initdata = {
 	},
 };
 
+static struct i2c_board_info mxc_i2c2_board_info_of_urt[] __initdata = {
+	{
+		I2C_BOARD_INFO("st1232-ts", 0x55),
+		.irq  = gpio_to_irq(OFC_URT_TS_IRQ),
+	},
+};
+
 static void imx6q_icore_usbotg_vbus(bool on)
 {
 #if 0
@@ -1633,6 +1661,9 @@ static void icore_customized_board_init (void)
 
 			case ENGICAM_MEDIAPLAYER_V0:
 				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_mediaplayer, ARRAY_SIZE(mx6q_icore_pads_mediaplayer));
+
+			case ENGICAM_CAPACITIVE_OF_URT:
+				mxc_iomux_v3_setup_multiple_pads(mx6q_icore_pads_capacitive_of_urt, ARRAY_SIZE(mx6q_icore_pads_capacitive_of_urt));
 			break;
 		}
 	}
@@ -1662,6 +1693,10 @@ static void icore_customized_board_init (void)
 
 			case ENGICAM_MEDIAPLAYER_V0:
 				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_mediaplayer, ARRAY_SIZE(mx6dl_icore_pads_mediaplayer));
+			break;
+
+			case ENGICAM_CAPACITIVE_OF_URT:
+				mxc_iomux_v3_setup_multiple_pads(mx6dl_icore_pads_capacitive_of_urt, ARRAY_SIZE(mx6dl_icore_pads_capacitive_of_urt));
 			break;
 		}
 	}
@@ -1741,6 +1776,11 @@ static void icore_customized_i2c_init (void)
 		case ENGICAM_MEDIAPLAYER_V0:
 			i2c_register_board_info(2, mxc_i2c2_board_info_mediaplayer,	ARRAY_SIZE(mxc_i2c2_board_info_mediaplayer));
 		break;
+
+		case ENGICAM_CAPACITIVE_OF_URT:
+			i2c_register_board_info(2, mxc_i2c2_board_info_of_urt,	ARRAY_SIZE(mxc_i2c2_board_info_of_urt));
+		break;
+
 	}
 }
 
@@ -1927,13 +1967,16 @@ static void __init mx6_icore_board_init(void)
 	imx6q_add_gpmi(&mx6q_gpmi_nand_platform_data);
 	mx6q_csi0_io_init();
 
-	if(engi_board==ENGICAM_MEDIAPLAYER_V0)
+	switch(engi_board)
 	{
-		gpio_set_value(ICORE_M6_WF111_RESET_MP,1);
-	}
-	else
-	{
-		gpio_set_value(ICORE_M6_WF111_RESET_SK,1);
+		case ENGICAM_MEDIAPLAYER_V0:
+			gpio_set_value(ICORE_M6_WF111_RESET_MP,1);
+			break;
+		case ENGICAM_CAPACITIVE_OF_URT:
+			gpio_set_value(ICORE_M6_WF111_RESET_URT,1);
+			break;	
+		default:
+			gpio_set_value(ICORE_M6_WF111_RESET_SK,1);
 	}
 
 	
