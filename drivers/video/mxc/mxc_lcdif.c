@@ -82,7 +82,7 @@ static struct fb_videomode lcdif_modedb[] = {
          },
 	{
 	/* 1024x600 @ 60 Hz */
-	"LDB-WSGA", 60, 1024, 600, 18939, 353, 47, 39, 4, 8, 2,
+	"LCD-WSGA", 60, 1024, 600, 18939, 353, 47, 39, 4, 8, 2,
 	FB_SYNC_CLK_LAT_FALL | FB_SYNC_COMP_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
 	FB_VMODE_NONINTERLACED
 	 },
