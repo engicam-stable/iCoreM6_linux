@@ -112,7 +112,7 @@
 #define ICORE_M6_WF111_RESET_URT	IMX_GPIO_NR(6, 2)
 #define ICORE_M6_OF_LVDS_RESET	IMX_GPIO_NR(6, 0)
 #define ICORE_MODULE_VERSION    IMX_GPIO_NR(7, 2)
-#define ICORE_BACKLIGHT3 	IMX_GPIO_NR(2, 9)
+#define ICORE_BACKLIGHT3 	IMX_GPIO_NR(4, 20)
 
 #define ICORE_M6_SD3_WP_PADCFG	(PAD_CTL_PKE | PAD_CTL_PUE |	\
 		PAD_CTL_PUS_22K_UP | PAD_CTL_SPEED_MED |	\
@@ -293,7 +293,7 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	MX6Q_PAD_DI0_PIN15__IPU1_DI0_PIN15,		/* DE */
 	MX6Q_PAD_DI0_PIN2__IPU1_DI0_PIN2,		/* HSync */
 	MX6Q_PAD_DI0_PIN3__IPU1_DI0_PIN3,		/* VSync */
-	MX6Q_PAD_DI0_PIN4__IPU1_DI0_PIN4,		/* Contrast */
+	MX6Q_PAD_DI0_PIN4__GPIO_4_20,		/* Contrast */
 	MX6Q_PAD_DISP0_DAT0__IPU1_DISP0_DAT_0,
 	MX6Q_PAD_DISP0_DAT1__IPU1_DISP0_DAT_1,
 	MX6Q_PAD_DISP0_DAT2__IPU1_DISP0_DAT_2,
@@ -491,7 +491,7 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_DI0_PIN15__IPU1_DI0_PIN15,		/* DE */
 	MX6DL_PAD_DI0_PIN2__IPU1_DI0_PIN2,		/* HSync */
 	MX6DL_PAD_DI0_PIN3__IPU1_DI0_PIN3,		/* VSync */
-	MX6DL_PAD_DI0_PIN4__IPU1_DI0_PIN4,		/* Contrast */
+	MX6DL_PAD_DI0_PIN4__GPIO_4_20,		/* Contrast */
 	MX6DL_PAD_DISP0_DAT0__IPU1_DISP0_DAT_0,
 	MX6DL_PAD_DISP0_DAT1__IPU1_DISP0_DAT_1,
 	MX6DL_PAD_DISP0_DAT2__IPU1_DISP0_DAT_2,
@@ -1924,8 +1924,10 @@ static void __init mx6_icore_board_init(void)
 	imx6q_add_mxc_pwm_backlight(3, &mx6_icore_pwm_backlight_data);
 #endif
 
-	gpio_request(ICORE_BACKLIGHT3, "backlight-pwm3");
+	gpio_request(ICORE_BACKLIGHT3, "backlight-pwm3");	/* backlight on rev. B */
 	gpio_direction_output(ICORE_BACKLIGHT3, 0);
+	gpio_set_value(ICORE_BACKLIGHT3, 1);
+	gpio_free(ICORE_BACKLIGHT3);
 
 	imx6q_add_mxc_pwm(2);
 	imx6q_add_mxc_pwm_backlight(0, &mx6_icore_pwm0_backlight_data);
@@ -1993,7 +1995,7 @@ static void __init mx6_icore_board_init(void)
 	{
 		gpio_request(OFC_LVDS_ENABLE, "OFC_LVDS_ENABLE");
 		gpio_direction_output(OFC_LVDS_ENABLE, 0);
-		gpio_set_value(OFC_LVDS_ENABLE, 0);
+		gpio_set_value(OFC_LVDS_ENABLE, 1);
 		gpio_free(OFC_LVDS_ENABLE);
 	}
 
