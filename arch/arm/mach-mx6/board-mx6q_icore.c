@@ -1583,7 +1583,7 @@ static int imx6q_init_audio(void)
 static struct platform_pwm_backlight_data mx6_icore_pwm0_backlight_data = {
 	.pwm_id = 2,
 	.max_brightness = 255,
-	.dft_brightness = 255,
+	.dft_brightness = 254,
 	.pwm_period_ns = 100000,
 };
 
