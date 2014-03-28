@@ -86,6 +86,16 @@ static struct fb_videomode lcdif_modedb[] = {
 	FB_SYNC_CLK_LAT_FALL | FB_SYNC_COMP_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT,
 	FB_VMODE_NONINTERLACED
 	 },
+	{
+	 /* 1280x800 @ 60 Hz OPENFRAME CAP 10.1'' */ 
+	 "LCD-WXGAI", 60, 1280, 800, 14065,
+	 40, 40,
+	 10, 3,
+	 80, 10,
+	 FB_SYNC_CLK_LAT_FALL,
+	 FB_VMODE_NONINTERLACED,
+	 FB_MODE_IS_DETAILED,
+	},
 };
 static int lcdif_modedb_sz = ARRAY_SIZE(lcdif_modedb);
 
