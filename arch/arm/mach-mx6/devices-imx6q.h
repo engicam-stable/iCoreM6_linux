@@ -35,6 +35,10 @@ extern const struct imx_caam_data imx6q_imx_caam_data __initconst;
 #define imx6q_add_imx_caam()	\
 	imx_add_caam(&imx6q_imx_caam_data)
 
+extern const struct imx_snvs_pwrkey_data imx6q_imx_snvs_pwrkey_data __initconst;
+#define imx6q_add_imx_snvs_pwrkey()	\
+	imx_add_snvs_pwrkey(&imx6q_imx_snvs_pwrkey_data)
+
 extern const struct imx_anatop_thermal_imx_data
 imx6q_anatop_thermal_imx_data __initconst;
 #define imx6q_add_anatop_thermal_imx(id, pdata)	\

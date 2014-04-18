@@ -81,14 +81,13 @@
 
 #define ICORE_M6_SD3_CD		IMX_GPIO_NR(7, 0)
 #define ICORE_M6_SD3_WP		IMX_GPIO_NR(7, 1)
+#define ICORE_M6_SD3_nPWR_EN	IMX_GPIO_NR(1, 4)
 #define ICORE_M6_SD4_CD		IMX_GPIO_NR(2, 6)
 #define ICORE_M6_SD4_WP		IMX_GPIO_NR(2, 7)
 #define ICORE_M6_ECSPI1_CS1	IMX_GPIO_NR(3, 19)
 #define ICORE_M6_USB_OTG_PWR	IMX_GPIO_NR(3, 22)
 #define ICORE_M6_CAP_TCH_INT1	IMX_GPIO_NR(1, 9)
 #define ICORE_M6_USB_HUB_RESET	IMX_GPIO_NR(7, 12)
-#define ICORE_M6_CAN1_STBY	IMX_GPIO_NR(1, 2)
-#define ICORE_M6_CAN1_EN	IMX_GPIO_NR(1, 4)
 #define ICORE_M6_MENU_KEY	IMX_GPIO_NR(2, 1)
 #define ICORE_M6_BACK_KEY	IMX_GPIO_NR(2, 2)
 #define ICORE_M6_ONOFF_KEY	IMX_GPIO_NR(2, 3)
@@ -299,7 +298,7 @@ static iomux_v3_cfg_t mx6q_icore_pads[] = {
 	MX6Q_PAD_SD1_DAT1__USDHC1_DAT1,
 	MX6Q_PAD_SD1_DAT2__USDHC1_DAT2,
 	MX6Q_PAD_SD1_DAT3__USDHC1_DAT3,
-	MX6Q_PAD_GPIO_1__GPIO_1_1,		/* SD1_CD */
+//	MX6Q_PAD_GPIO_1__GPIO_1_1,		/* SD1_CD */
 
 
 	/* USDHC3 */
@@ -444,7 +443,7 @@ static iomux_v3_cfg_t mx6dl_icore_pads[] = {
 	MX6DL_PAD_SD1_DAT1__USDHC1_DAT1,
 	MX6DL_PAD_SD1_DAT2__USDHC1_DAT2,
 	MX6DL_PAD_SD1_DAT3__USDHC1_DAT3,
-	MX6DL_PAD_GPIO_1__GPIO_1_1,		/* SD1_CD */
+//	MX6DL_PAD_GPIO_1__GPIO_1_1,		/* SD1_CD */
 
 
 	/* USDHC3 */
@@ -947,26 +946,7 @@ static struct ahci_platform_data mx6q_icore_sata_data = {
 	.exit = mx6q_icore_sata_exit,
 };
 
-static struct gpio mx6q_icore_flexcan_gpios[] = {
-	{ ICORE_M6_CAN1_EN, GPIOF_OUT_INIT_LOW, "flexcan1-en" },
-	{ ICORE_M6_CAN1_STBY, GPIOF_OUT_INIT_LOW, "flexcan1-stby" },
-};
 
-static void mx6q_icore_flexcan0_switch(int enable)
-{
-	if (enable) {
-		gpio_set_value(ICORE_M6_CAN1_EN, 1);
-		gpio_set_value(ICORE_M6_CAN1_STBY, 1);
-	} else {
-		gpio_set_value(ICORE_M6_CAN1_EN, 0);
-		gpio_set_value(ICORE_M6_CAN1_STBY, 0);
-	}
-}
-
-static const struct flexcan_platform_data
-	mx6q_icore_flexcan0_pdata __initconst = {
-	.transceiver_switch = mx6q_icore_flexcan0_switch,
-};
 
 static struct viv_gpu_platform_data imx6q_gpu_pdata __initdata = {
 	.reserved_mem_size = SZ_128M,
@@ -1403,6 +1383,7 @@ static void __init mx6_icore_board_init(void)
 //	imx6q_add_v4l2_capture(1, &capture_data[1]);
 
 	imx6q_add_imx_snvs_rtc();
+        imx6q_add_imx_snvs_pwrkey();
 
 //	imx6q_add_imx_caam();
 
@@ -1432,9 +1413,15 @@ static void __init mx6_icore_board_init(void)
 		OBSRV_MUX1_ENET_IRQ, OBSRV_MUX1_MASK);
 #endif
 	imx6q_add_pm_imx(0, &mx6q_icore_pm_data);
-	imx6q_add_sdhci_usdhc_imx(0, &mx6q_icore_sd1_data);
-	imx6q_add_sdhci_usdhc_imx(2, &mx6q_icore_sd3_data);
-	imx6q_add_sdhci_usdhc_imx(3, &mx6q_icore_sd4_data);
+
+	gpio_request(ICORE_M6_SD3_nPWR_EN, "SD3_nPWR_EN");
+	gpio_direction_output(ICORE_M6_SD3_nPWR_EN, 0);
+        gpio_set_value(ICORE_M6_SD3_nPWR_EN, 0);
+        gpio_free(ICORE_M6_SD3_nPWR_EN);
+
+	imx6q_add_sdhci_usdhc_imx(3, &mx6q_icore_sd4_data); //eMMC
+	imx6q_add_sdhci_usdhc_imx(2, &mx6q_icore_sd3_data); //SD
+	imx6q_add_sdhci_usdhc_imx(0, &mx6q_icore_sd1_data); //WiFi
 
 	if (!cpu_is_mx6q())		// i.Core M6Solo con 256MB RAM
 		imx6q_gpu_pdata.reserved_mem_size = SZ_32M;
@@ -1474,12 +1461,6 @@ static void __init mx6_icore_board_init(void)
 	imx6q_add_hdmi_soc();
 	imx6q_add_hdmi_soc_dai();
 
-	ret = gpio_request_array(mx6q_icore_flexcan_gpios,
-			ARRAY_SIZE(mx6q_icore_flexcan_gpios));
-	if (ret)
-		pr_err("failed to request flexcan1-gpios: %d\n", ret);
-	else
-		imx6q_add_flexcan0(&mx6q_icore_flexcan0_pdata);
 
 	clko2 = clk_get(NULL, "clko2_clk");
 	if (IS_ERR(clko2))

@@ -563,4 +563,12 @@ config KEYBOARD_W90P910
 	  To compile this driver as a module, choose M here: the
 	  module will be called w90p910_keypad.
 
+config KEYBOARD_SNVS_PWRKEY
+	tristate "MX6 SNVS Power Key Driver"
+	depends on SOC_IMX6Q
+	help
+	  This is the Keypad driver for the Freescale MXC application
+	  processors.
+
+
 endif

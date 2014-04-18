@@ -106,6 +106,17 @@ struct imx_snvs_rtc_data {
 struct platform_device *__init imx_add_snvs_rtc(
 		const struct imx_snvs_rtc_data *data);
 
+struct imx_snvs_pwrkey_data {
+	resource_size_t iobase;
+	resource_size_t irq;
+};
+
+ 
+struct platform_device *__init imx_add_snvs_pwrkey(
+		const struct imx_snvs_pwrkey_data *data);
+ 
+
+
 struct imx_caam_jr_data {
 	resource_size_t offset_jr;
 	resource_size_t irq_jr;
